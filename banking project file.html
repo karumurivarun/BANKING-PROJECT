@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V Banking Services</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F6F3; --card:#FFFFFF; --ink-900:#16202B; --ink-600:#4B5768; --ink-400:#8B93A0; --hairline:#E3E5DF;
+    --brass-500:#B68A3D; --brass-400:#CBA35C; --brass-tint:#FBF6EC;
+    --vega-700:#3B2768; --vega-600:#4B2E83; --vega-500:#5B3AA8; --vega-400:#8A6FD6; --vega-tint:#F1EDFB;
+    --success:#2F8F5C; --debit:#B23A3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); color:var(--ink-900); font-family:'IBM Plex Sans', sans-serif; -webkit-font-smoothing:antialiased;}
+  button{font-family:inherit;}
+  .serif{font-family:'Fraunces', serif;}
+
+  .view-full{display:none; min-height:100vh;}
+  .view-full.active{display:flex; align-items:center; justify-content:center; padding:40px 20px;}
+  .auth-shell{background:linear-gradient(160deg, #0B1A2B, #16233A);}
+  .auth-card{background:#F4F1E9; width:min(440px,92vw); border-radius:4px; padding:38px 34px; box-shadow:0 30px 60px -20px rgba(0,0,0,.5);}
+  .auth-logo{display:flex; align-items:center; gap:10px; margin-bottom:24px;}
+  .auth-logo svg{width:20px; height:20px;}
+  .auth-logo span{font-family:'Fraunces', serif; font-size:15px; letter-spacing:.03em; color:#16202B;}
+  .auth-heading{font-family:'Fraunces', serif; font-size:19px; margin:0 0 20px; color:#16202B;}
+  .auth-tabs{display:flex; gap:6px; margin-bottom:22px; background:#EAE5D6; padding:4px; border-radius:8px;}
+  .auth-tab{flex:1; padding:9px; border:none; background:none; border-radius:6px; font-size:13.5px; cursor:pointer; color:#5B6472;}
+  .auth-tab.active{background:#fff; color:#16202B; font-weight:500; box-shadow:0 1px 3px rgba(0,0,0,.12);}
+  .auth-form{display:none;}
+  .auth-form.active-form{display:block;}
+  .auth-field{margin-bottom:14px;}
+  .auth-field label{display:block; font-size:12px; color:#5B6472; margin-bottom:6px;}
+  .auth-field input, .auth-field select{width:100%; padding:11px 13px; border:1px solid #D8D3C4; border-radius:4px; font-size:14px; background:#FCFBF8; color:#16202B;}
+  .auth-field input:focus, .auth-field select:focus{outline:2px solid #B68A3D; border-color:#B68A3D;}
+  .auth-row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .auth-error{font-size:12.5px; color:#B23A3A; margin:-4px 0 14px; display:none;}
+  .auth-error.show{display:block;}
+  .auth-hint{font-size:12px; color:#7C8494; margin:0 0 16px;}
+  .auth-submit{width:100%; padding:13px; background:#16202B; color:#F4F1E9; border:none; border-radius:4px; font-size:14.5px; font-weight:500; cursor:pointer;}
+  .auth-submit:hover{background:#000;}
+  .auth-admin-link{display:block; width:100%; text-align:center; background:none; border:none; color:#5B6472; font-size:12.5px; text-decoration:underline; cursor:pointer; margin-top:6px;}
+  .auth-forgot{display:block; text-align:right; background:none; border:none; color:#5B6472; font-size:12.5px; text-decoration:underline; cursor:pointer; margin:-6px 0 16px; margin-left:auto;}
+  .auth-stage{display:none;}
+  .auth-stage.active-stage{display:block;}
+  .qtext{font-size:13px; color:#16202B; background:#EAE5D6; padding:9px 12px; border-radius:6px; margin-bottom:8px;}
+
+  .admin-shell{background:var(--paper); align-items:flex-start !important; padding:40px 6vw !important;}
+  .admin-wrap{width:100%; max-width:1020px; margin:0 auto;}
+  .admin-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;}
+  .admin-top h2{font-family:'Fraunces', serif; font-weight:500; font-size:22px; margin:0;}
+  .admin-grid{display:grid; grid-template-columns:0.85fr 1.4fr; gap:20px;}
+  .admin-card{background:var(--card); border:1px solid var(--hairline); border-radius:12px; padding:22px;}
+  .admin-card h3{font-family:'Fraunces', serif; font-weight:500; font-size:15px; margin:0 0 16px; color:var(--ink-600);}
+  .admin-table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  .admin-table th{text-align:left; font-size:11.5px; color:var(--ink-400); font-weight:500; padding:0 8px 10px; border-bottom:1px solid var(--hairline);}
+  .admin-table td{padding:10px 8px; border-bottom:1px solid var(--hairline); vertical-align:middle;}
+  .admin-balance-input{width:110px; padding:6px 8px; border:1px solid var(--hairline); border-radius:6px; font-size:13px;}
+  .admin-mini-btn{padding:6px 10px; border-radius:6px; border:1px solid var(--hairline); background:var(--card); font-size:12px; cursor:pointer; margin-right:4px;}
+  .admin-mini-btn:hover{background:var(--paper);}
+  .admin-mini-btn.danger{color:#B23A3A; border-color:#F0D2D2;}
+  .log-row{display:flex; gap:12px; padding:8px 0; border-top:1px solid var(--hairline); font-size:12.5px;}
+  .log-row:first-child{border-top:none;}
+  .log-time{color:var(--ink-400); flex-shrink:0; min-width:150px;}
+  .field-row{margin-bottom:14px;}
+  .field-row label{display:block; font-size:12px; color:var(--ink-400); margin-bottom:6px;}
+  .field-row input{width:100%; padding:10px 12px; border:1px solid var(--hairline); border-radius:8px; font-size:14px;}
+
+  .app{display:none; min-height:100vh;}
+  .app.shown{display:flex;}
+  .sidebar{width:236px; flex-shrink:0; background:var(--card); border-right:1px solid var(--hairline); padding:26px 18px; display:flex; flex-direction:column;}
+  .side-logo{display:flex; align-items:center; gap:10px; padding:6px 8px 30px;}
+  .side-logo svg{width:22px; height:22px;}
+  .side-logo span{font-family:'Fraunces', serif; font-size:15px; letter-spacing:0.02em;}
+  .side-nav{display:flex; flex-direction:column; gap:2px;}
+  .side-link{display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:8px; border:none; background:none; color:var(--ink-600); font-size:14px; text-align:left; cursor:pointer; transition:background .15s ease, color .15s ease;}
+  .side-link svg{width:18px; height:18px; flex-shrink:0;}
+  .side-link:hover{background:var(--paper); color:var(--ink-900);}
+  .side-link.active{background:var(--brass-tint); color:var(--ink-900); font-weight:500;}
+  .side-link.active svg{stroke:var(--brass-500);}
+  .main{flex:1; min-width:0; padding:34px 44px 60px;}
+  .view{display:none;}
+  .view.active{display:block; animation:fadeIn .35s ease both;}
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:32px;}
+  .greeting h1{font-family:'Fraunces', serif; font-weight:500; font-size:26px; margin:0 0 4px;}
+  .greeting p{margin:0; font-size:13.5px; color:var(--ink-400);}
+  .topbar-right{display:flex; align-items:center; gap:12px;}
+  .avatar{width:40px; height:40px; border-radius:50%; background:var(--ink-900); color:var(--paper); display:flex; align-items:center; justify-content:center; font-family:'Fraunces', serif; font-size:15px; flex-shrink:0;}
+  .logout-btn{width:38px; height:38px; border-radius:8px; border:1px solid var(--hairline); background:var(--card); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-600);}
+  .logout-btn:hover{background:var(--paper);}
+  .logout-btn svg{width:16px; height:16px;}
+
+  .balance-card{position:relative; background:var(--card); border:1px solid var(--hairline); border-radius:14px; padding:28px 30px; margin-bottom:28px; overflow:hidden;}
+  .balance-glow{position:absolute; top:-40%; right:-10%; width:320px; height:320px; border-radius:50%; background:radial-gradient(circle, rgba(182,138,61,0.16), transparent 70%); animation:breathe 8s ease-in-out infinite alternate; pointer-events:none;}
+  @keyframes breathe{ from{transform:scale(0.9); opacity:.7;} to{transform:scale(1.15); opacity:1;} }
+  @media (prefers-reduced-motion: reduce){ .balance-glow{animation:none;} }
+  .balance-top{display:flex; align-items:center; justify-content:space-between; position:relative; z-index:1;}
+  .balance-label{font-size:13px; color:var(--ink-400);}
+  .balance-row{display:flex; align-items:baseline; gap:14px; margin-top:10px; position:relative; z-index:1;}
+  .balance-amt{font-family:'Fraunces', serif; font-size:36px; font-weight:500; letter-spacing:0.02em;}
+  .eye-btn{background:none; border:1px solid var(--hairline); border-radius:8px; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-600); flex-shrink:0;}
+  .eye-btn:hover{background:var(--paper);}
+  .eye-btn svg{width:17px; height:17px;}
+
+  .zones{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:28px;}
+  .zone{background:var(--card); border:1px solid var(--hairline); border-radius:12px; padding:22px 22px 8px;}
+  .zone h3{font-family:'Fraunces', serif; font-weight:500; font-size:15px; margin:0 0 16px; color:var(--ink-600);}
+  .zone-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; padding-bottom:14px;}
+  .zone-btn{display:flex; flex-direction:column; align-items:center; gap:9px; background:none; border:none; cursor:pointer; padding:10px 4px; border-radius:8px; color:var(--ink-900);}
+  .zone-btn:hover{background:var(--paper);}
+  .zone-icon{width:42px; height:42px; border-radius:50%; background:var(--brass-tint); display:flex; align-items:center; justify-content:center;}
+  .zone-icon svg{width:19px; height:19px; stroke:var(--brass-500);}
+  .zone-btn span{font-size:12px; text-align:center; line-height:1.3; color:var(--ink-600);}
+
+  .vega-promo{position:relative; background:linear-gradient(135deg, var(--vega-600), var(--vega-500) 55%, var(--vega-400)); border-radius:14px; padding:28px 30px; margin-bottom:28px; color:#fff; overflow:hidden; cursor:pointer; border:none; text-align:left; width:100%; display:block;}
+  .vega-promo::after{content:''; position:absolute; right:-60px; bottom:-80px; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.14), transparent 70%);}
+  .vega-eyebrow{font-family:'Fraunces', serif; font-style:italic; font-size:13px; opacity:0.85; margin-bottom:8px;}
+  .vega-title{font-family:'Fraunces', serif; font-size:24px; font-weight:500; margin-bottom:8px;}
+  .vega-sub{font-size:13.5px; opacity:0.82; max-width:44ch; margin-bottom:18px;}
+  .vega-cta{display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.35); padding:9px 16px; border-radius:8px; font-size:13.5px; color:#fff;}
+
+  .txn-card{background:var(--card); border:1px solid var(--hairline); border-radius:12px; padding:22px 24px;}
+  .txn-card-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .txn-card h3{font-family:'Fraunces', serif; font-weight:500; font-size:15px; margin:0; color:var(--ink-600);}
+  .txn-link{background:none; border:none; color:var(--vega-500); font-size:12.5px; cursor:pointer; text-decoration:underline;}
+  .txn-row{display:flex; align-items:center; gap:14px; padding:12px 0; border-top:1px solid var(--hairline);}
+  .txn-row:first-of-type{border-top:none;}
+  .txn-dot{width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .txn-dot.credit{background:#EAF5EE;}
+  .txn-dot.debit{background:#FAECEC;}
+  .txn-dot svg{width:15px; height:15px;}
+  .txn-dot.credit svg{stroke:var(--success);}
+  .txn-dot.debit svg{stroke:var(--debit);}
+  .txn-info{flex:1; min-width:0;}
+  .txn-info .name{font-size:14px;}
+  .txn-info .date{font-size:12px; color:var(--ink-400);}
+  .txn-amt{font-family:'Fraunces', serif; font-size:15px;}
+  .txn-amt.credit{color:var(--success);}
+  .txn-amt.debit{color:var(--debit);}
+  .txn-empty{font-size:13px; color:var(--ink-400); padding:10px 0;}
+
+  .view-head{display:flex; align-items:center; gap:14px; margin-bottom:26px;}
+  .back-btn{width:36px; height:36px; border-radius:8px; border:1px solid var(--hairline); background:var(--card); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;}
+  .back-btn:hover{background:var(--paper);}
+  .back-btn svg{width:16px; height:16px;}
+  .view-head h2{font-family:'Fraunces', serif; font-weight:500; font-size:22px; margin:0;}
+
+  .vega-wallet-card{background:linear-gradient(135deg, var(--vega-700), var(--vega-500)); border-radius:14px; padding:26px 28px; color:#fff; margin-bottom:20px;}
+  .vega-wallet-top{display:flex; justify-content:space-between; align-items:flex-start;}
+  .vega-wallet-label{font-size:12.5px; opacity:0.8;}
+  .vega-wallet-amt{font-family:'Fraunces', serif; font-size:32px; margin-top:8px; letter-spacing:0.03em;}
+  .vega-eye{background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.32); width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#fff;}
+  .vega-eye svg{width:16px; height:16px;}
+  .view-wallet-btn{margin-top:18px; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.35); color:#fff; padding:9px 16px; border-radius:8px; font-size:13px; cursor:pointer;}
+
+  .notes-panel{display:none; background:var(--card); border:1px solid var(--hairline); border-radius:12px; padding:20px; margin-bottom:20px;}
+  .notes-panel.open{display:block;}
+  .notes-panel h4{font-family:'Fraunces', serif; font-weight:500; font-size:14px; margin:0 0 14px; color:var(--ink-600);}
+  .notes-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(84px, 1fr)); gap:10px;}
+  .note-chip{position:relative; border-radius:8px; padding:12px 8px 10px; color:#fff; text-align:center; font-family:'Fraunces', serif;}
+  .note-chip .amt{font-size:16px; font-weight:500;}
+  .note-chip .badge{position:absolute; top:6px; right:6px; background:rgba(255,255,255,0.28); border-radius:10px; font-size:10px; padding:1px 6px; font-family:'IBM Plex Sans', sans-serif;}
+
+  .vega-actions{display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:20px;}
+  .vega-act-btn{display:flex; flex-direction:column; align-items:center; gap:9px; background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:16px 6px; cursor:pointer; color:var(--ink-900);}
+  .vega-act-btn:hover{border-color:var(--vega-400);}
+  .vega-act-btn .zone-icon{background:var(--vega-tint);}
+  .vega-act-btn .zone-icon svg{stroke:var(--vega-500);}
+  .vega-act-btn span{font-size:12px; color:var(--ink-600);}
+
+  .id-card{background:var(--card); border:1px solid var(--hairline); border-radius:12px; padding:20px 22px;}
+  .id-card h4{font-family:'Fraunces', serif; font-weight:500; font-size:14px; margin:0 0 14px; color:var(--ink-600);}
+  .id-row{display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
+  .qr-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:2px; width:78px; height:78px; background:#fff; padding:5px; border-radius:6px; border:1px solid var(--hairline); flex-shrink:0;}
+  .qr-grid div{aspect-ratio:1; border-radius:1px;}
+  .id-detail{flex:1; min-width:180px;}
+  .id-current{font-family:'Fraunces', serif; font-size:16px; margin-bottom:6px;}
+  .id-status{font-size:12.5px; color:var(--ink-400); margin-bottom:10px;}
+  .id-edit-row{display:none; gap:8px; margin-top:10px;}
+  .id-edit-row.open{display:flex;}
+  .id-edit-row input{flex:1; padding:8px 10px; border:1px solid var(--hairline); border-radius:6px; font-size:13px;}
+  .id-mini-btn{padding:8px 12px; border-radius:6px; border:1px solid var(--hairline); background:var(--card); font-size:12.5px; cursor:pointer;}
+  .id-mini-btn.primary{background:var(--vega-600); color:#fff; border-color:var(--vega-600);}
+  .id-avail-msg{font-size:12px; margin-top:6px;}
+  .id-avail-msg.ok{color:var(--success);}
+  .id-avail-msg.bad{color:var(--debit);}
+  .toggle-switch{position:relative; width:42px; height:24px; border-radius:12px; background:var(--hairline); border:none; cursor:pointer; flex-shrink:0;}
+  .toggle-switch.on{background:var(--success);}
+  .toggle-switch::after{content:''; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:transform .15s ease;}
+  .toggle-switch.on::after{transform:translateX(18px);}
+
+  .recipient-tabs{display:flex; gap:8px; margin-bottom:20px;}
+  .recipient-tab{padding:9px 16px; border-radius:8px; border:1px solid var(--hairline); background:var(--card); font-size:13px; cursor:pointer;}
+  .recipient-tab.active{background:var(--vega-600); border-color:var(--vega-600); color:#fff;}
+  .recipient-pane{display:none;}
+  .recipient-pane.active{display:block;}
+  .user-pick-row{display:flex; align-items:center; gap:12px; padding:12px 10px; border-radius:8px; cursor:pointer; border:1px solid transparent;}
+  .user-pick-row:hover{background:var(--card); border-color:var(--hairline);}
+  .user-pick-avatar{width:34px; height:34px; border-radius:50%; background:var(--vega-tint); color:var(--vega-700); display:flex; align-items:center; justify-content:center; font-family:'Fraunces', serif; font-size:13px; flex-shrink:0;}
+  .user-pick-row .uname{font-size:12px; color:var(--ink-400);}
+  .qr-pick-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(100px,1fr)); gap:12px;}
+  .qr-tile{display:flex; flex-direction:column; align-items:center; gap:8px; background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:14px 8px; cursor:pointer;}
+  .qr-tile:hover{border-color:var(--vega-400);}
+  .qr-tile span{font-size:12px; color:var(--ink-600); text-align:center;}
+  .vegaid-lookup{display:flex; gap:8px; margin-bottom:16px;}
+  .vegaid-lookup input{flex:1; padding:11px 13px; border:1px solid var(--hairline); border-radius:8px; font-size:14px;}
+  .lookup-result{background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:16px; display:none;}
+  .lookup-result.show{display:flex; align-items:center; justify-content:space-between;}
+
+  .contact-chip{display:inline-flex; align-items:center; gap:8px; background:var(--vega-tint); color:var(--vega-700); padding:7px 14px; border-radius:20px; font-size:13px; margin-bottom:20px;}
+  .mode-tabs{display:flex; gap:8px; margin-bottom:18px;}
+  .mode-tab{padding:8px 16px; border-radius:8px; border:1px solid var(--hairline); background:var(--card); font-size:13px; cursor:pointer;}
+  .mode-tab.active{background:var(--vega-600); border-color:var(--vega-600); color:#fff;}
+
+  .remaining-bar{display:flex; justify-content:space-between; align-items:center; background:var(--vega-tint); border:1px solid var(--vega-400); border-radius:10px; padding:12px 16px; margin-bottom:18px; position:sticky; top:0; z-index:5;}
+  .remaining-bar .lbl{font-size:12px; color:var(--vega-700);}
+  .remaining-bar .val{font-family:'Fraunces', serif; font-size:19px; color:var(--vega-700);}
+
+  .send-note{border-radius:10px; padding:14px 10px; color:#fff; text-align:center; cursor:pointer; border:2px solid transparent; transition:opacity .15s ease, transform .1s ease; font-family:'Fraunces', serif;}
+  .send-note .amt{font-size:17px; font-weight:500;}
+  .send-note .avail{font-size:10.5px; font-family:'IBM Plex Sans', sans-serif; opacity:0.85; margin-top:4px;}
+  .send-note.disabled{opacity:0.32; cursor:not-allowed;}
+  .send-note.usable{border-color:rgba(255,255,255,0.75);}
+
+  .break-suggest{background:#FBF1E9; border:1px solid var(--brass-400); border-radius:10px; padding:14px 16px; margin-bottom:18px; display:none;}
+  .break-suggest.show{display:block;}
+  .break-suggest p{margin:0 0 10px; font-size:13.5px; color:var(--ink-900);}
+  .break-suggest button{background:var(--brass-500); color:#fff; border:none; border-radius:8px; padding:9px 14px; font-size:13px; cursor:pointer;}
+
+  .pin-panel{display:none; background:var(--vega-tint); border:1px solid var(--vega-400); border-radius:10px; padding:18px; margin-top:16px;}
+  .pin-panel.show{display:block;}
+  .pin-panel p{margin:0 0 12px; font-size:13px; color:var(--vega-700);}
+  .pin-panel input{width:140px; padding:10px 12px; border:1px solid var(--vega-400); border-radius:8px; font-size:16px; letter-spacing:4px; text-align:center;}
+
+  .primary-btn{width:100%; padding:14px; background:var(--vega-600); color:#fff; border:none; border-radius:10px; font-size:14.5px; font-weight:500; cursor:pointer; margin-top:8px;}
+  .primary-btn:disabled{background:var(--ink-400); cursor:not-allowed;}
+  .primary-btn:hover:not(:disabled){background:var(--vega-700);}
+  .ghost-btn{width:100%; padding:12px; background:none; color:var(--ink-600); border:1px solid var(--hairline); border-radius:10px; font-size:13.5px; cursor:pointer; margin-top:10px;}
+
+  .field-row input, .field-row select{width:100%; padding:11px 13px; border:1px solid var(--hairline); border-radius:8px; font-size:14.5px;}
+  .field-row label{display:block; font-size:12.5px; color:var(--ink-400); margin-bottom:7px;}
+
+  .stepper-row{display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-top:1px solid var(--hairline);}
+  .stepper-row:first-of-type{border-top:none;}
+  .stepper-swatch{width:44px; height:30px; border-radius:5px; display:flex; align-items:center; justify-content:center; color:#fff; font-family:'Fraunces', serif; font-size:12px;}
+  .stepper-controls{display:flex; align-items:center; gap:10px;}
+  .stepper-controls button{width:28px; height:28px; border-radius:50%; border:1px solid var(--hairline); background:var(--card); cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center; color:var(--ink-900);}
+  .stepper-controls button:hover{background:var(--paper);}
+  .stepper-count{min-width:20px; text-align:center; font-size:14px;}
+
+  .load-total{display:flex; justify-content:space-between; align-items:center; background:var(--vega-tint); border-radius:10px; padding:14px 16px; margin:18px 0;}
+  .load-total .lbl{font-size:12.5px; color:var(--vega-700);}
+  .load-total .val{font-family:'Fraunces', serif; font-size:20px; color:var(--vega-700);}
+  .load-error{font-size:12.5px; color:var(--debit); margin:-8px 0 14px; display:none;}
+  .load-error.show{display:block;}
+
+  /* ---- Celebration animation ---- */
+  .success-state{display:none; text-align:center; padding:26px 10px;}
+  .success-state.show{display:block;}
+  .celebrate{position:relative; width:140px; height:140px; margin:0 auto 18px;}
+  .celebrate .ring{position:absolute; inset:0; border-radius:50%; border:3px solid var(--success); opacity:0; animation:ringPulse 1s ease-out forwards;}
+  .celebrate .ring2{border-color:var(--vega-400); animation-delay:.15s;}
+  @keyframes ringPulse{0%{transform:scale(0.4); opacity:.9;} 100%{transform:scale(1.7); opacity:0;}}
+  .celebrate .core{position:absolute; inset:34px; border-radius:50%; background:var(--success); display:flex; align-items:center; justify-content:center; animation:coreBounce .5s ease .3s both;}
+  @keyframes coreBounce{0%{transform:scale(0);} 70%{transform:scale(1.15);} 100%{transform:scale(1);}}
+  .celebrate .core svg{width:30px; height:30px;}
+  .celebrate .core path{stroke-dasharray:40; stroke-dashoffset:40; animation:drawcheck .4s ease .55s forwards;}
+  @keyframes drawcheck{to{stroke-dashoffset:0;}}
+  .confetti-dot{position:absolute; top:50%; left:50%; width:7px; height:7px; border-radius:50%; opacity:0; animation:burst .8s ease-out .35s forwards;}
+  @keyframes burst{0%{transform:translate(-50%,-50%) scale(0); opacity:1;} 100%{transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1); opacity:0;}}
+  @media (prefers-reduced-motion: reduce){ .celebrate .ring, .celebrate .core, .confetti-dot{animation:none; opacity:1;} }
+  .success-state h3{font-family:'Fraunces', serif; font-weight:500; margin:0 0 6px; font-size:19px;}
+  .success-state p{color:var(--ink-400); font-size:13.5px; margin:0;}
+
+  .toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink-900); color:#fff; padding:12px 20px; border-radius:10px; font-size:13.5px; opacity:0; pointer-events:none; transition:opacity .25s ease, transform .25s ease; z-index:50;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  /* ---- History ---- */
+  .hist-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:22px;}
+  .hist-stat{background:var(--card); border:1px solid var(--hairline); border-radius:12px; padding:18px 20px;}
+  .hist-stat .lbl{font-size:12px; color:var(--ink-400); margin-bottom:6px;}
+  .hist-stat .val{font-family:'Fraunces', serif; font-size:22px;}
+  .hist-filters{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;}
+  .hist-filter{padding:8px 14px; border-radius:20px; border:1px solid var(--hairline); background:var(--card); font-size:12.5px; cursor:pointer;}
+  .hist-filter.active{background:var(--vega-tint); border-color:var(--vega-400); color:var(--vega-700); font-weight:500;}
+
+  .bottom-tabs{display:none; position:fixed; bottom:0; left:0; right:0; background:var(--card); border-top:1px solid var(--hairline); padding:8px 4px; z-index:30;}
+  .bottom-tabs .side-nav{flex-direction:row; justify-content:space-around;}
+  .bottom-tabs .side-link{flex-direction:column; gap:4px; font-size:10.5px; padding:6px 4px;}
+  .bottom-tabs .side-link svg{width:19px; height:19px;}
+
+  @media (max-width: 880px){
+    .sidebar{display:none;}
+    .main{padding:24px 18px 90px;}
+    .zones{grid-template-columns:1fr;}
+    .notes-grid{grid-template-columns:repeat(3, 1fr);}
+    .admin-grid{grid-template-columns:1fr;}
+    .hist-stats{grid-template-columns:1fr;}
+    .auth-row2{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= AUTH ================= -->
+<div class="view-full auth-shell active" id="view-auth">
+  <div class="auth-card">
+    <div class="auth-logo"><svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 6L16 27L27 6" stroke="#B68A3D" stroke-width="2" stroke-linecap="square"/></svg><span>V BANKING SERVICES</span></div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')" type="button">Log in</button>
+      <button class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')" type="button">Create account</button>
+    </div>
+
+    <form id="loginForm2" class="auth-form active-form" onsubmit="handleLogin(event)">
+      <div class="auth-field"><label for="loginUsername">Username</label><input id="loginUsername" type="text" autocomplete="username" required></div>
+      <div class="auth-field"><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required></div>
+      <button type="button" class="auth-forgot" onclick="goForgotPassword()">Forgot password?</button>
+      <div class="auth-error" id="loginError"></div>
+      <button class="auth-submit" type="submit">Log in</button>
+    </form>
+
+    <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
+      <div class="auth-field"><label for="signupName">Full name</label><input id="signupName" type="text" required></div>
+      <div class="auth-field"><label for="signupUsername">Choose a username</label><input id="signupUsername" type="text" required></div>
+      <div class="auth-row2">
+        <div class="auth-field"><label for="signupPassword">Password</label><input id="signupPassword" type="password" required></div>
+        <div class="auth-field"><label for="signupPassword2">Confirm password</label><input id="signupPassword2" type="password" required></div>
+      </div>
+      <div class="auth-field"><label for="signupQ1">Security question 1</label><select id="signupQ1"></select></div>
+      <div class="auth-field"><label for="signupA1">Answer</label><input id="signupA1" type="text" required></div>
+      <div class="auth-field"><label for="signupQ2">Security question 2</label><select id="signupQ2"></select></div>
+      <div class="auth-field"><label for="signupA2">Answer</label><input id="signupA2" type="text" required></div>
+      <p class="auth-hint">New accounts start with a ₹500 welcome cashback.</p>
+      <div class="auth-error" id="signupError"></div>
+      <button class="auth-submit" type="submit">Create account</button>
+    </form>
+
+    <button class="auth-admin-link" type="button" onclick="showScreen('admin-login')">Admin access</button>
+  </div>
+</div>
+
+<!-- ================= FORGOT PASSWORD ================= -->
+<div class="view-full auth-shell" id="view-forgot">
+  <div class="auth-card">
+    <div class="auth-logo"><svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 6L16 27L27 6" stroke="#B68A3D" stroke-width="2" stroke-linecap="square"/></svg><span>V BANKING SERVICES</span></div>
+    <h2 class="auth-heading">Reset your password</h2>
+
+    <div class="auth-stage active-stage" id="fpStage1">
+      <div class="auth-field"><label for="fpUsername">Username</label><input id="fpUsername" type="text" required></div>
+      <div class="auth-error" id="fpError1"></div>
+      <button class="auth-submit" type="button" onclick="handleForgotStage1()">Continue</button>
+    </div>
+
+    <div class="auth-stage" id="fpStage2">
+      <div class="qtext" id="fpQ1text"></div>
+      <div class="auth-field"><input id="fpA1" type="text" placeholder="Your answer" required></div>
+      <div class="qtext" id="fpQ2text"></div>
+      <div class="auth-field"><input id="fpA2" type="text" placeholder="Your answer" required></div>
+      <div class="auth-error" id="fpError2"></div>
+      <button class="auth-submit" type="button" onclick="handleForgotStage2()">Verify answers</button>
+    </div>
+
+    <div class="auth-stage" id="fpStage3">
+      <div class="auth-field"><label for="fpNewPass">New password</label><input id="fpNewPass" type="password" required></div>
+      <div class="auth-field"><label for="fpNewPass2">Confirm new password</label><input id="fpNewPass2" type="password" required></div>
+      <div class="auth-error" id="fpError3"></div>
+      <button class="auth-submit" type="button" onclick="handleForgotStage3()">Reset password</button>
+    </div>
+
+    <button class="auth-admin-link" type="button" onclick="showScreen('auth')">Back to login</button>
+  </div>
+</div>
+
+<!-- ================= ADMIN LOGIN ================= -->
+<div class="view-full auth-shell" id="view-admin-login">
+  <div class="auth-card">
+    <div class="auth-logo"><svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 6L16 27L27 6" stroke="#B68A3D" stroke-width="2" stroke-linecap="square"/></svg><span>V BANKING SERVICES</span></div>
+    <h2 class="auth-heading">Admin sign in</h2>
+    <form id="adminLoginForm" class="auth-form active-form" onsubmit="handleAdminLogin(event)">
+      <div class="auth-field"><label for="adminUsername">Admin username</label><input id="adminUsername" type="text" required></div>
+      <div class="auth-field"><label for="adminPassword">Admin password</label><input id="adminPassword" type="password" required></div>
+      <div class="auth-error" id="adminError"></div>
+      <button class="auth-submit" type="submit">Enter admin panel</button>
+    </form>
+    <button class="auth-admin-link" type="button" onclick="showScreen('auth')">Back to login</button>
+  </div>
+</div>
+
+<!-- ================= ADMIN PANEL ================= -->
+<div class="view-full admin-shell" id="view-admin-panel">
+  <div class="admin-wrap">
+    <div class="admin-top"><h2>Admin — V Banking Services</h2><button class="ghost-btn" style="width:auto; padding:9px 16px; margin-top:0;" onclick="adminLogout()">Log out</button></div>
+    <div class="admin-grid">
+      <div class="admin-card">
+        <h3>Add user</h3>
+        <form id="adminAddForm" onsubmit="handleAdminAddUser(event)">
+          <div class="field-row"><label for="newUserName">Full name</label><input id="newUserName" type="text" required></div>
+          <div class="field-row"><label for="newUserUsername">Username</label><input id="newUserUsername" type="text" required></div>
+          <div class="field-row"><label for="newUserPassword">Password</label><input id="newUserPassword" type="text" required></div>
+          <div class="field-row"><label for="newUserBalance">Starting balance (₹)</label><input id="newUserBalance" type="number" min="0" step="0.01" value="0"></div>
+          <button class="primary-btn" type="submit" style="background:var(--brass-500);">Add user</button>
+        </form>
+      </div>
+      <div class="admin-card">
+        <h3>All users</h3>
+        <table class="admin-table"><thead><tr><th>Name</th><th>Username</th><th>Balance</th><th></th></tr></thead><tbody id="adminUsersBody"></tbody></table>
+      </div>
+    </div>
+    <div class="admin-card" style="margin-top:20px;"><h3>Activity log</h3><div id="adminLog"></div></div>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div class="app" id="appShell">
+  <aside class="sidebar">
+    <div class="side-logo"><svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 6L16 27L27 6" stroke="#CBA35C" stroke-width="2" stroke-linecap="square"/></svg><span>V BANKING</span></div>
+    <nav class="side-nav">
+      <button class="side-link active" data-nav="home" onclick="goHome()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</button>
+      <button class="side-link" onclick="toast('This section is coming soon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>Recharges &amp; Bills</button>
+      <button class="side-link" data-nav="history" onclick="goHistory()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Transactions</button>
+      <button class="side-link" onclick="toast('This section is coming soon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Cards</button>
+      <button class="side-link" onclick="toast('This section is coming soon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profile</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <!-- HOME -->
+    <div class="view active" id="view-home">
+      <div class="topbar">
+        <div class="greeting"><h1>Welcome back, <span id="greetName">Alex</span></h1><p>Here's where things stand today.</p></div>
+        <div class="topbar-right"><div class="avatar" id="avatarInitial">A</div><button class="logout-btn" onclick="logout()" aria-label="Log out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></button></div>
+      </div>
+
+      <div class="balance-card">
+        <div class="balance-glow"></div>
+        <div class="balance-top"><span class="balance-label">Account balance</span></div>
+        <div class="balance-row">
+          <span class="balance-amt" id="homeBalanceText">••••••</span>
+          <button class="eye-btn" onclick="toggleHomeBalance()" aria-label="Show or hide balance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+      </div>
+
+      <div class="zones">
+        <div class="zone">
+          <h3>Quick pay</h3>
+          <div class="zone-grid">
+            <button class="zone-btn" onclick="openSendPick('qr')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM19 19h2v2h-2z"/></svg></span><span>Scan QR</span></button>
+            <button class="zone-btn" onclick="openSendPick('username')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span><span>Pay to Person by Username</span></button>
+            <button class="zone-btn" onclick="openSendPick('vegaid')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/></svg></span><span>Vega ID</span></button>
+          </div>
+        </div>
+        <div class="zone">
+          <h3>Everyday</h3>
+          <div class="zone-grid">
+            <button class="zone-btn" onclick="toast('Feature coming soon')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 6h6M9 18h.01"/></svg></span><span>Recharges</span></button>
+            <button class="zone-btn" onclick="toast('Feature coming soon')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 100 4 2 2 0 010 4h18a2 2 0 100-4 2 2 0 000-4H3z"/></svg></span><span>Ticket booking</span></button>
+            <button class="zone-btn" onclick="toast('Feature coming soon')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M9 12h6M9 16h6"/></svg></span><span>Bill pay</span></button>
+          </div>
+        </div>
+      </div>
+
+      <button class="vega-promo" onclick="goVega()">
+        <p class="vega-eyebrow">Introducing</p>
+        <div class="vega-title">VegaPay</div>
+        <p class="vega-sub">Your money, note by note. Load, send, and break down currency exactly the way you'd handle real notes — nothing gets rounded off.</p>
+        <span class="vega-cta">Open VegaPay</span>
+      </button>
+
+      <div class="txn-card">
+        <div class="txn-card-head"><h3>Recent transactions</h3><button class="txn-link" onclick="goHistory()">View all</button></div>
+        <div id="homeTxnList"></div>
+      </div>
+    </div>
+
+    <!-- VEGAPAY -->
+    <div class="view" id="view-vega">
+      <div class="view-head"><button class="back-btn" onclick="goHome()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2>VegaPay</h2></div>
+
+      <div class="vega-wallet-card">
+        <div class="vega-wallet-top">
+          <div><div class="vega-wallet-label">Current balance</div><div class="vega-wallet-amt" id="vegaBalanceText">••••••</div></div>
+          <button class="vega-eye" onclick="toggleVegaBalance()" aria-label="Show or hide VegaPay balance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+        <button class="view-wallet-btn" onclick="toggleNotesPanel()">View wallet</button>
+      </div>
+
+      <div class="notes-panel" id="notesPanel"><h4>Notes in your wallet</h4><div class="notes-grid" id="notesGrid"></div></div>
+
+      <div class="vega-actions">
+        <button class="vega-act-btn" onclick="openSendPick('username')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></span><span>Send</span></button>
+        <button class="vega-act-btn" onclick="toast('Coming soon')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></span><span>Collect</span></button>
+        <button class="vega-act-btn" onclick="openLoad()"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2M3 12h18"/></svg></span><span>Load</span></button>
+        <button class="vega-act-btn" onclick="toast('Coming soon')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span><span>Redeem</span></button>
+      </div>
+
+      <div class="id-card">
+        <h4>Your Vega ID &amp; QR</h4>
+        <div class="id-row">
+          <div class="qr-grid" id="myQrGrid"></div>
+          <div class="id-detail">
+            <div class="id-current" id="myVegaIdText">—</div>
+            <div class="id-status" id="myVegaIdStatus">—</div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <button class="id-mini-btn" onclick="toggleIdEdit()">Edit ID</button>
+              <button class="toggle-switch" id="vegaIdToggle" onclick="toggleVegaIdActive()" aria-label="Toggle Vega ID availability"></button>
+              <span style="font-size:12px; color:var(--ink-400);">Available to receive</span>
+            </div>
+            <div class="id-edit-row" id="idEditRow">
+              <input id="idEditInput" type="text" placeholder="yourname@vegapay">
+              <button class="id-mini-btn" onclick="checkIdAvailability()">Check</button>
+              <button class="id-mini-btn primary" onclick="saveVegaId()">Save</button>
+            </div>
+            <div class="id-avail-msg" id="idAvailMsg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEND PICK (recipient selection) -->
+    <div class="view" id="view-send-pick">
+      <div class="view-head"><button class="back-btn" onclick="goVega()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2>Who are you paying?</h2></div>
+      <div class="recipient-tabs">
+        <button class="recipient-tab" id="rtabUsername" onclick="switchRecipientTab('username')">By username</button>
+        <button class="recipient-tab" id="rtabQr" onclick="switchRecipientTab('qr')">By QR</button>
+        <button class="recipient-tab" id="rtabVegaid" onclick="switchRecipientTab('vegaid')">By Vega ID</button>
+      </div>
+      <div class="recipient-pane" id="paneUsername" id="paneUsername"><div id="userPickList"></div></div>
+      <div class="recipient-pane" id="paneQr"><div class="qr-pick-grid" id="qrPickGrid"></div></div>
+      <div class="recipient-pane" id="paneVegaid">
+        <div class="vegaid-lookup"><input id="vegaidLookupInput" type="text" placeholder="e.g. meena@vegapay"><button class="id-mini-btn primary" onclick="lookupVegaId()">Find</button></div>
+        <div class="lookup-result" id="vegaidLookupResult"></div>
+      </div>
+    </div>
+
+    <!-- SEND -->
+    <div class="view" id="view-send">
+      <div class="view-head"><button class="back-btn" onclick="goVega()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2>Send money</h2></div>
+      <div class="contact-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span id="sendToName">To: —</span></div>
+      <div class="mode-tabs"><button class="mode-tab active" id="modeManualTab" onclick="setSendMode('manual')">Manual</button><button class="mode-tab" id="modeAutoTab" onclick="setSendMode('auto')">Automatic</button></div>
+      <div id="sendFormArea">
+        <div class="field-row"><label for="sendAmount">Amount to send</label><input type="number" id="sendAmount" value="100" min="1" oninput="onSendAmountChange()"></div>
+        <div class="remaining-bar" id="remainingBar"><span class="lbl">Remaining to select</span><span class="val" id="remainingVal">₹0</span></div>
+        <div class="break-suggest" id="breakSuggest"><p id="breakMsg"></p><button onclick="acceptBreak()">Break the note</button></div>
+        <div id="autoResultArea" style="display:none; margin-bottom:18px;"><p style="font-size:13px; color:var(--ink-600); margin:0 0 10px;">VegaPay selected these notes:</p><div class="notes-grid" id="autoNotesGrid"></div></div>
+        <div class="notes-grid" id="sendNotesGrid"></div>
+
+        <div class="pin-panel" id="pinPanelCreate">
+          <p>Create a 4-digit Vega PIN to protect your payments. You'll use this every time you send money.</p>
+          <input type="password" inputmode="numeric" maxlength="4" id="pinCreate1" placeholder="••••"> &nbsp;
+          <input type="password" inputmode="numeric" maxlength="4" id="pinCreate2" placeholder="Confirm">
+          <div class="auth-error" id="pinCreateError" style="margin-top:10px;"></div>
+          <button class="primary-btn" onclick="submitPinCreate()">Save PIN &amp; send</button>
+        </div>
+        <div class="pin-panel" id="pinPanelEnter">
+          <p>Enter your Vega PIN to confirm this payment.</p>
+          <input type="password" inputmode="numeric" maxlength="4" id="pinEnter" placeholder="••••">
+          <div class="auth-error" id="pinEnterError" style="margin-top:10px;"></div>
+          <button class="primary-btn" onclick="submitPinEnter()">Confirm &amp; send</button>
+        </div>
+
+        <button class="primary-btn" id="sendConfirmBtn" disabled onclick="beginPinStep()">Send</button>
+        <button class="ghost-btn" onclick="resetSend()">Reset selection</button>
+      </div>
+      <div class="success-state" id="sendSuccess">
+        <div class="celebrate">
+          <div class="ring"></div><div class="ring ring2"></div>
+          <div class="core"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+          <div class="confetti-dot" style="--dx:-55px; --dy:-40px; background:var(--vega-500);"></div>
+          <div class="confetti-dot" style="--dx:55px; --dy:-40px; background:var(--brass-500);"></div>
+          <div class="confetti-dot" style="--dx:-70px; --dy:10px; background:var(--success);"></div>
+          <div class="confetti-dot" style="--dx:70px; --dy:10px; background:var(--vega-400);"></div>
+          <div class="confetti-dot" style="--dx:-35px; --dy:60px; background:var(--brass-400);"></div>
+          <div class="confetti-dot" style="--dx:35px; --dy:60px; background:var(--vega-500);"></div>
+          <div class="confetti-dot" style="--dx:0px; --dy:-70px; background:var(--success);"></div>
+          <div class="confetti-dot" style="--dx:0px; --dy:75px; background:var(--brass-500);"></div>
+        </div>
+        <h3>Sent successfully</h3><p id="sendSuccessMsg"></p>
+      </div>
+    </div>
+
+    <!-- LOAD -->
+    <div class="view" id="view-load">
+      <div class="view-head"><button class="back-btn" onclick="goVega()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2>Load wallet</h2></div>
+      <div id="loadFormArea">
+        <p style="font-size:13.5px; color:var(--ink-600); margin:0 0 6px;">Choose how many of each note to add. This amount is debited from your main account balance.</p>
+        <div class="load-total"><span class="lbl">Total to load</span><span class="val" id="loadTotalVal">₹0</span></div>
+        <div class="load-error" id="loadError"></div>
+        <div id="loadSteppers"></div>
+        <button class="primary-btn" id="loadConfirmBtn" disabled onclick="confirmLoad()">Load wallet</button>
+      </div>
+      <div class="success-state" id="loadSuccess">
+        <div class="celebrate">
+          <div class="ring"></div><div class="ring ring2"></div>
+          <div class="core"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+          <div class="confetti-dot" style="--dx:-55px; --dy:-40px; background:var(--vega-500);"></div>
+          <div class="confetti-dot" style="--dx:55px; --dy:-40px; background:var(--brass-500);"></div>
+          <div class="confetti-dot" style="--dx:-70px; --dy:10px; background:var(--success);"></div>
+          <div class="confetti-dot" style="--dx:70px; --dy:10px; background:var(--vega-400);"></div>
+          <div class="confetti-dot" style="--dx:-35px; --dy:60px; background:var(--brass-400);"></div>
+          <div class="confetti-dot" style="--dx:35px; --dy:60px; background:var(--vega-500);"></div>
+          <div class="confetti-dot" style="--dx:0px; --dy:-70px; background:var(--success);"></div>
+          <div class="confetti-dot" style="--dx:0px; --dy:75px; background:var(--brass-500);"></div>
+        </div>
+        <h3>Wallet loaded</h3><p id="loadSuccessMsg"></p>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="view" id="view-history">
+      <div class="view-head"><button class="back-btn" onclick="goHome()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2>Transaction history</h2></div>
+      <div class="hist-stats">
+        <div class="hist-stat"><div class="lbl">Total transactions</div><div class="val" id="histCount">0</div></div>
+        <div class="hist-stat"><div class="lbl">Total amount circulated</div><div class="val" id="histCirculated">₹0.00</div></div>
+        <div class="hist-stat"><div class="lbl">Remaining balance</div><div class="val" id="histBalance">₹0.00</div></div>
+      </div>
+      <div class="hist-filters" id="histFilters"></div>
+      <div class="txn-card"><div id="histList"></div></div>
+    </div>
+  </main>
+</div>
+
+<nav class="bottom-tabs" id="bottomTabsShell">
+  <div class="side-nav">
+    <button class="side-link active" data-nav="home" onclick="goHome()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</button>
+    <button class="side-link" onclick="toast('This section is coming soon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>Bills</button>
+    <button class="side-link" data-nav="history" onclick="goHistory()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Activity</button>
+    <button class="side-link" onclick="toast('This section is coming soon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Cards</button>
+    <button class="side-link" onclick="toast('This section is coming soon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profile</button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  /* ================= Constants ================= */
+  const STORAGE_KEY = 'vbanking_state_v2';
+  const ADMIN_USER = 'admin', ADMIN_PASS = 'admin123';
+  const DENOMS = [500,200,100,50,20,10,5,2,1];
+  const NOTE_COLOR = {500:'#4B2E83',200:'#1F6F78',100:'#B68A3D',50:'#B23A55',20:'#2F6FB0',10:'#3F8F5C',5:'#C0672E',2:'#5B6472',1:'#8A8272'};
+  const BREAK_MAP = {500:[[200,2],[100,1]],200:[[100,2]],100:[[50,2]],50:[[20,2],[10,1]],20:[[10,2]],10:[[5,2]],5:[[2,2],[1,1]],2:[[1,2]]};
+  const QUESTION_BANK = [
+    "What city were you born in?",
+    "What was the name of your first pet?",
+    "What is your mother's maiden name?",
+    "What was your first school's name?",
+    "What was the make of your first vehicle?",
+    "What is your favorite book?"
+  ];
+  const FILTER_RANGES = {all:Infinity, '1d':1*86400000, '2d':2*86400000, '3d':3*86400000, '1w':7*86400000, '1m':30*86400000, '1y':365*86400000};
+  const FILTER_LABELS = {all:'All', '1d':'1 day', '2d':'2 days', '3d':'3 days', '1w':'1 week', '1m':'1 month', '1y':'1 year'};
+
+  let state = null;
+
+  /* ================= Persistence ================= */
+  function loadState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; } catch(e){ return null; } }
+  function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  function seedIfNeeded(){
+    const existing = loadState();
+    if(existing && existing.users && existing.users.length){ state = existing; return; }
+    state = {
+      users: [
+        {id:'u1', name:'Ravi Kumar', username:'ravi', password:'ravi123', balance:15250.50,
+         vegaNotes:{500:2,200:1,100:2,50:1,20:2,10:2,5:1,2:2,1:3}, vegaId:'ravi@vegapay', vegaIdActive:true, vegaPin:null,
+         securityQuestions:[{q:QUESTION_BANK[0],a:'chennai'},{q:QUESTION_BANK[1],a:'tommy'}], transactions:[]},
+        {id:'u2', name:'Meena Iyer', username:'meena', password:'meena123', balance:8400.00,
+         vegaNotes:{500:1,200:2,100:1,50:2,20:1,10:3,5:2,2:1,1:2}, vegaId:'meena@vegapay', vegaIdActive:true, vegaPin:null,
+         securityQuestions:[{q:QUESTION_BANK[2],a:'nair'},{q:QUESTION_BANK[3],a:'stmarys'}], transactions:[]},
+        {id:'u3', name:'Arjun Rao', username:'arjun', password:'arjun123', balance:32100.25,
+         vegaNotes:{500:3,200:0,100:2,50:1,20:2,10:1,5:1,2:2,1:1}, vegaId:'arjun@vegapay', vegaIdActive:true, vegaPin:null,
+         securityQuestions:[{q:QUESTION_BANK[4],a:'honda'},{q:QUESTION_BANK[5],a:'ramayana'}], transactions:[]}
+      ],
+      nextId:4, currentUserId:null, isAdminSession:false, log:[]
+    };
+    saveState();
+  }
+  function logAction(desc){ state.log.unshift({ts:new Date().toLocaleString('en-IN'), desc}); if(state.log.length>15) state.log.length=15; saveState(); }
+  function getCurrentUser(){ return state.users.find(u=>u.id===state.currentUserId); }
+  function getUserById(id){ return state.users.find(u=>u.id===id); }
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function fmt(n){ return '₹' + Number(n).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._timer); t._timer=setTimeout(()=>t.classList.remove('show'), 2200); }
+  function addTxn(user, type, desc, amount){
+    user.transactions.unshift({id:'t'+Date.now()+Math.random().toString(16).slice(2), ts:Date.now(), tsLabel:new Date().toLocaleString('en-IN'), type, desc, amount});
+    if(user.transactions.length>500) user.transactions.length=500;
+  }
+
+  /* ================= Screen routing ================= */
+  function showScreen(name){
+    ['view-auth','view-forgot','view-admin-login','view-admin-panel'].forEach(id=>{
+      document.getElementById(id).classList.toggle('active', id==='view-'+name);
+    });
+    const dashboardNames = ['home','vega','send-pick','send','load','history'];
+    const inDashboard = dashboardNames.includes(name);
+    document.getElementById('appShell').classList.toggle('shown', inDashboard);
+    document.getElementById('bottomTabsShell').style.display = inDashboard ? '' : 'none';
+    if(inDashboard){
+      document.querySelectorAll('#appShell .view').forEach(v=>v.classList.remove('active'));
+      document.getElementById('view-'+name).classList.add('active');
+    }
+  }
+  function setActiveNav(name){
+    document.querySelectorAll('.side-link').forEach(l=>l.classList.remove('active'));
+    document.querySelectorAll('[data-nav="'+name+'"]').forEach(l=>l.classList.add('active'));
+  }
+  function goHome(){ setActiveNav('home'); renderHomeTxns(); showScreen('home'); }
+  function goVega(){ renderNotesGrid(); renderMyIdCard(); showScreen('vega'); }
+  function goHistory(){ setActiveNav('history'); renderHistory(); showScreen('history'); }
+
+  /* ================= Auth ================= */
+  function populateQuestionSelects(){
+    const q1 = document.getElementById('signupQ1'), q2 = document.getElementById('signupQ2');
+    q1.innerHTML = QUESTION_BANK.map(q=>`<option value="${escapeHtml(q)}">${escapeHtml(q)}</option>`).join('');
+    q2.innerHTML = QUESTION_BANK.map(q=>`<option value="${escapeHtml(q)}">${escapeHtml(q)}</option>`).join('');
+    q2.selectedIndex = 1;
+  }
+  function switchAuthTab(tab){
+    document.getElementById('tabLogin').classList.toggle('active', tab==='login');
+    document.getElementById('tabSignup').classList.toggle('active', tab==='signup');
+    document.getElementById('loginForm2').classList.toggle('active-form', tab==='login');
+    document.getElementById('signupForm').classList.toggle('active-form', tab==='signup');
+    document.getElementById('loginError').classList.remove('show');
+    document.getElementById('signupError').classList.remove('show');
+  }
+  function showAuthError(id, msg){ const el=document.getElementById(id); el.textContent=msg; el.classList.add('show'); }
+  function handleLogin(e){
+    e.preventDefault();
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const user = state.users.find(u=>u.username.toLowerCase()===username.toLowerCase() && u.password===password);
+    if(!user){ showAuthError('loginError','Invalid username or password'); return; }
+    document.getElementById('loginError').classList.remove('show');
+    logAction(`${user.name} logged in`);
+    enterDashboard(user);
+  }
+  function handleSignup(e){
+    e.preventDefault();
+    const name = document.getElementById('signupName').value.trim();
+    const username = document.getElementById('signupUsername').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const password2 = document.getElementById('signupPassword2').value;
+    const q1 = document.getElementById('signupQ1').value, a1 = document.getElementById('signupA1').value.trim();
+    const q2 = document.getElementById('signupQ2').value, a2 = document.getElementById('signupA2').value.trim();
+    if(!name || !username || !password || !password2 || !a1 || !a2){ showAuthError('signupError','Please fill in every field'); return; }
+    if(password !== password2){ showAuthError('signupError','Passwords do not match'); return; }
+    if(q1 === q2){ showAuthError('signupError','Please choose two different security questions'); return; }
+    if(state.users.some(u=>u.username.toLowerCase()===username.toLowerCase())){ showAuthError('signupError','That username is already taken'); return; }
+    document.getElementById('signupError').classList.remove('show');
+    const user = {
+      id:'u'+state.nextId, name, username, password, balance:500,
+      vegaNotes:{}, vegaId:username.toLowerCase()+'@vegapay', vegaIdActive:true, vegaPin:null,
+      securityQuestions:[{q:q1,a:a1.toLowerCase()},{q:q2,a:a2.toLowerCase()}], transactions:[]
+    };
+    state.nextId += 1;
+    state.users.push(user);
+    logAction(`New account created: ${name} (@${username}) — ₹500 cashback applied`);
+    toast('Account created — ₹500 cashback added!');
+    enterDashboard(user);
+  }
+  function enterDashboard(user){
+    state.currentUserId = user.id; state.isAdminSession = false; saveState();
+    homeHidden = true; vegaHidden = true;
+    document.getElementById('greetName').textContent = user.name.split(' ')[0] || user.name;
+    document.getElementById('avatarInitial').textContent = (user.name[0]||'?').toUpperCase();
+    refreshHomeBalance();
+    goHome();
+  }
+  function logout(){
+    const u = getCurrentUser();
+    logAction(`${u ? u.name : 'User'} logged out`);
+    state.currentUserId = null; saveState();
+    document.getElementById('loginUsername').value=''; document.getElementById('loginPassword').value='';
+    switchAuthTab('login');
+    showScreen('auth');
+  }
+
+  /* ================= Forgot password ================= */
+  let fpUserId = null;
+  function goForgotPassword(){
+    fpUserId = null;
+    document.getElementById('fpUsername').value='';
+    document.getElementById('fpA1').value=''; document.getElementById('fpA2').value='';
+    document.getElementById('fpNewPass').value=''; document.getElementById('fpNewPass2').value='';
+    ['fpError1','fpError2','fpError3'].forEach(id=>document.getElementById(id).classList.remove('show'));
+    document.getElementById('fpStage1').classList.add('active-stage');
+    document.getElementById('fpStage2').classList.remove('active-stage');
+    document.getElementById('fpStage3').classList.remove('active-stage');
+    showScreen('forgot');
+  }
+  function handleForgotStage1(){
+    const username = document.getElementById('fpUsername').value.trim();
+    const user = state.users.find(u=>u.username.toLowerCase()===username.toLowerCase());
+    if(!user){ showAuthError('fpError1','No account found with that username'); return; }
+    if(!user.securityQuestions || user.securityQuestions.length < 2){ showAuthError('fpError1','No recovery info on file for this account. Contact admin.'); return; }
+    document.getElementById('fpError1').classList.remove('show');
+    fpUserId = user.id;
+    document.getElementById('fpQ1text').textContent = user.securityQuestions[0].q;
+    document.getElementById('fpQ2text').textContent = user.securityQuestions[1].q;
+    document.getElementById('fpStage1').classList.remove('active-stage');
+    document.getElementById('fpStage2').classList.add('active-stage');
+  }
+  function handleForgotStage2(){
+    const user = getUserById(fpUserId);
+    const a1 = document.getElementById('fpA1').value.trim().toLowerCase();
+    const a2 = document.getElementById('fpA2').value.trim().toLowerCase();
+    if(a1 !== user.securityQuestions[0].a || a2 !== user.securityQuestions[1].a){
+      showAuthError('fpError2','One or both answers are incorrect'); return;
+    }
+    document.getElementById('fpError2').classList.remove('show');
+    document.getElementById('fpStage2').classList.remove('active-stage');
+    document.getElementById('fpStage3').classList.add('active-stage');
+  }
+  function handleForgotStage3(){
+    const p1 = document.getElementById('fpNewPass').value, p2 = document.getElementById('fpNewPass2').value;
+    if(!p1 || p1 !== p2){ showAuthError('fpError3','Passwords do not match'); return; }
+    const user = getUserById(fpUserId);
+    user.password = p1;
+    logAction(`${user.name} reset their password via security questions`);
+    saveState();
+    toast('Password reset — you can log in now');
+    switchAuthTab('login');
+    showScreen('auth');
+  }
+
+  /* ================= Admin ================= */
+  function handleAdminLogin(e){
+    e.preventDefault();
+    const u = document.getElementById('adminUsername').value.trim();
+    const p = document.getElementById('adminPassword').value;
+    if(u===ADMIN_USER && p===ADMIN_PASS){
+      document.getElementById('adminError').classList.remove('show');
+      state.isAdminSession = true; state.currentUserId = null; saveState();
+      logAction('Admin logged in');
+      renderAdminPanel();
+      showScreen('admin-panel');
+    } else { showAuthError('adminError','Invalid admin credentials'); }
+  }
+  function adminLogout(){
+    logAction('Admin logged out');
+    state.isAdminSession = false; saveState();
+    document.getElementById('adminUsername').value=''; document.getElementById('adminPassword').value='';
+    showScreen('auth');
+  }
+  function renderAdminPanel(){
+    const tbody = document.getElementById('adminUsersBody');
+    tbody.innerHTML = '';
+    state.users.forEach(u=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${escapeHtml(u.name)}</td><td>@${escapeHtml(u.username)}</td>
+        <td><input type="number" class="admin-balance-input" id="bal-${u.id}" value="${u.balance}" step="0.01"></td>
+        <td><button class="admin-mini-btn" onclick="saveBalance('${u.id}')">Save</button><button class="admin-mini-btn danger" onclick="deleteUser('${u.id}')">Delete</button></td>`;
+      tbody.appendChild(tr);
+    });
+    const log = document.getElementById('adminLog');
+    log.innerHTML = state.log.length ? state.log.map(l=>`<div class="log-row"><span class="log-time">${l.ts}</span><span>${escapeHtml(l.desc)}</span></div>`).join('') : '<p style="color:var(--ink-400); font-size:13px;">No activity yet.</p>';
+  }
+  function saveBalance(id){
+    const input = document.getElementById('bal-'+id);
+    const val = Number(input.value);
+    if(isNaN(val) || val<0){ toast('Enter a valid balance'); return; }
+    const u = state.users.find(x=>x.id===id);
+    u.balance = val;
+    logAction(`Admin updated balance for ${u.name} to ${fmt(val)}`);
+    toast('Balance updated');
+    renderAdminPanel();
+  }
+  function deleteUser(id){
+    const u = state.users.find(x=>x.id===id);
+    if(!u) return;
+    if(!confirm(`Delete ${u.name}'s account? This cannot be undone.`)) return;
+    state.users = state.users.filter(x=>x.id!==id);
+    logAction(`Admin deleted account: ${u.name} (@${u.username})`);
+    toast('User deleted');
+    renderAdminPanel();
+  }
+  function handleAdminAddUser(e){
+    e.preventDefault();
+    const name = document.getElementById('newUserName').value.trim();
+    const username = document.getElementById('newUserUsername').value.trim();
+    const password = document.getElementById('newUserPassword').value;
+    const balance = Number(document.getElementById('newUserBalance').value) || 0;
+    if(!name || !username || !password){ toast('Fill in every field'); return; }
+    if(state.users.some(u=>u.username.toLowerCase()===username.toLowerCase())){ toast('Username already exists'); return; }
+    const user = {id:'u'+state.nextId, name, username, password, balance, vegaNotes:{}, vegaId:username.toLowerCase()+'@vegapay', vegaIdActive:true, vegaPin:null, securityQuestions:null, transactions:[]};
+    state.nextId += 1;
+    state.users.push(user);
+    logAction(`Admin added user: ${name} (@${username}) with ${fmt(balance)}`);
+    toast('User added');
+    document.getElementById('adminAddForm').reset();
+    renderAdminPanel();
+  }
+
+  /* ================= Home balance & recent txns ================= */
+  let homeHidden = true;
+  function refreshHomeBalance(){ const u=getCurrentUser(); document.getElementById('homeBalanceText').textContent = homeHidden ? '••••••' : fmt(u?u.balance:0); }
+  function toggleHomeBalance(){ homeHidden = !homeHidden; refreshHomeBalance(); }
+  function txnRowHtml(t){
+    const isCredit = t.type==='credit';
+    const iconPath = isCredit ? 'M7 17L17 7M17 17V7H7' : 'M17 7L7 17M7 7v10h10';
+    return `<div class="txn-row">
+      <div class="txn-dot ${isCredit?'credit':'debit'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="${iconPath}"/></svg></div>
+      <div class="txn-info"><div class="name">${escapeHtml(t.desc)}</div><div class="date">${t.tsLabel}</div></div>
+      <div class="txn-amt ${isCredit?'credit':'debit'}">${isCredit?'+':'-'}${fmt(t.amount)}</div>
+    </div>`;
+  }
+  function renderHomeTxns(){
+    const u = getCurrentUser(); if(!u) return;
+    const wrap = document.getElementById('homeTxnList');
+    const recent = u.transactions.slice(0,3);
+    wrap.innerHTML = recent.length ? recent.map(txnRowHtml).join('') : '<p class="txn-empty">No transactions yet — try sending or loading VegaPay.</p>';
+  }
+
+  /* ================= VegaPay wallet ================= */
+  let vegaHidden = true;
+  function calcBalance(notes){ return DENOMS.reduce((s,d)=> s + d*(notes[d]||0), 0); }
+  function refreshVegaBalance(){ const u=getCurrentUser(); const bal=calcBalance(u.vegaNotes); document.getElementById('vegaBalanceText').textContent = vegaHidden ? '••••••' : fmt(bal); }
+  function toggleVegaBalance(){ vegaHidden = !vegaHidden; refreshVegaBalance(); }
+  function toggleNotesPanel(){ document.getElementById('notesPanel').classList.toggle('open'); }
+  function renderNotesGrid(){
+    refreshVegaBalance();
+    const u = getCurrentUser();
+    const grid = document.getElementById('notesGrid');
+    grid.innerHTML = '';
+    DENOMS.forEach(d=>{
+      const count = u.vegaNotes[d]||0;
+      const chip = document.createElement('div');
+      chip.className='note-chip'; chip.style.background=NOTE_COLOR[d];
+      chip.innerHTML = `<span class="badge">×${count}</span><div class="amt">₹${d}</div>`;
+      grid.appendChild(chip);
+    });
+  }
+
+  /* ---- QR pattern generator (visual only, not a real scannable code) ---- */
+  function qrPattern(seedStr){
+    let hash = 0;
+    for(let i=0;i<seedStr.length;i++){ hash = (hash*31 + seedStr.charCodeAt(i)) >>> 0; }
+    const cells = [];
+    for(let i=0;i<25;i++){ hash = (Math.imul(hash,1103515245) + 12345) >>> 0; cells.push((hash>>>16) % 2 === 0); }
+    return cells;
+  }
+  function qrGridHtml(seedStr){
+    return qrPattern(seedStr).map(c=>`<div style="background:${c?'var(--vega-600)':'transparent'}"></div>`).join('');
+  }
+
+  /* ---- Vega ID management ---- */
+  function renderMyIdCard(){
+    const u = getCurrentUser();
+    document.getElementById('myQrGrid').innerHTML = qrGridHtml(u.vegaId);
+    document.getElementById('myVegaIdText').textContent = u.vegaId;
+    document.getElementById('myVegaIdStatus').textContent = u.vegaIdActive ? 'Active — others can pay you using this ID' : 'Inactive — this ID cannot receive payments right now';
+    document.getElementById('vegaIdToggle').classList.toggle('on', u.vegaIdActive);
+    document.getElementById('idEditRow').classList.remove('open');
+    document.getElementById('idAvailMsg').textContent = '';
+  }
+  function toggleVegaIdActive(){
+    const u = getCurrentUser();
+    u.vegaIdActive = !u.vegaIdActive;
+    logAction(`${u.name} set their Vega ID to ${u.vegaIdActive?'active':'inactive'}`);
+    renderMyIdCard();
+  }
+  function toggleIdEdit(){
+    const row = document.getElementById('idEditRow');
+    row.classList.toggle('open');
+    document.getElementById('idEditInput').value = getCurrentUser().vegaId;
+    document.getElementById('idAvailMsg').textContent = '';
+  }
+  function checkIdAvailability(){
+    const val = document.getElementById('idEditInput').value.trim().toLowerCase();
+    const u = getCurrentUser();
+    const msg = document.getElementById('idAvailMsg');
+    if(!val){ msg.textContent='Enter an ID to check'; msg.className='id-avail-msg bad'; return; }
+    const taken = state.users.some(x=>x.id!==u.id && x.vegaId.toLowerCase()===val);
+    if(taken){ msg.textContent='Already taken — try another'; msg.className='id-avail-msg bad'; }
+    else { msg.textContent='Available'; msg.className='id-avail-msg ok'; }
+  }
+  function saveVegaId(){
+    const val = document.getElementById('idEditInput').value.trim().toLowerCase();
+    const u = getCurrentUser();
+    if(!val){ toast('Enter a Vega ID'); return; }
+    const taken = state.users.some(x=>x.id!==u.id && x.vegaId.toLowerCase()===val);
+    if(taken){ toast('That Vega ID is already taken'); return; }
+    u.vegaId = val;
+    logAction(`${u.name} updated their Vega ID to ${val}`);
+    toast('Vega ID updated');
+    renderMyIdCard();
+  }
+
+  /* ================= Recipient picking ================= */
+  let sendRecipientId = null;
+  function openSendPick(defaultTab){
+    switchRecipientTab(defaultTab);
+    renderUserPickList();
+    renderQrPickGrid();
+    document.getElementById('vegaidLookupInput').value = '';
+    document.getElementById('vegaidLookupResult').classList.remove('show');
+    showScreen('send-pick');
+  }
+  function switchRecipientTab(tab){
+    document.getElementById('rtabUsername').classList.toggle('active', tab==='username');
+    document.getElementById('rtabQr').classList.toggle('active', tab==='qr');
+    document.getElementById('rtabVegaid').classList.toggle('active', tab==='vegaid');
+    document.getElementById('paneUsername').classList.toggle('active', tab==='username');
+    document.getElementById('paneQr').classList.toggle('active', tab==='qr');
+    document.getElementById('paneVegaid').classList.toggle('active', tab==='vegaid');
+  }
+  function otherUsers(){ const me=getCurrentUser(); return state.users.filter(u=>u.id!==me.id); }
+  function renderUserPickList(){
+    const wrap = document.getElementById('userPickList');
+    const others = otherUsers();
+    wrap.innerHTML = others.length ? others.map(u=>`
+      <div class="user-pick-row" onclick="pickRecipient('${u.id}')">
+        <div class="user-pick-avatar">${(u.name[0]||'?').toUpperCase()}</div>
+        <div><div>${escapeHtml(u.name)}</div><div class="uname">@${escapeHtml(u.username)}</div></div>
+      </div>`).join('') : '<p class="txn-empty">No other users yet.</p>';
+  }
+  function renderQrPickGrid(){
+    const wrap = document.getElementById('qrPickGrid');
+    const others = otherUsers();
+    wrap.innerHTML = others.length ? others.map(u=>`
+      <button class="qr-tile" onclick="pickRecipient('${u.id}')">
+        <div class="qr-grid">${qrGridHtml(u.vegaId)}</div>
+        <span>${escapeHtml(u.name)}</span>
+      </button>`).join('') : '<p class="txn-empty">No other users yet.</p>';
+  }
+  function lookupVegaId(){
+    const val = document.getElementById('vegaidLookupInput').value.trim().toLowerCase();
+    const result = document.getElementById('vegaidLookupResult');
+    if(!val){ toast('Enter a Vega ID'); return; }
+    const found = otherUsers().find(u=>u.vegaId.toLowerCase()===val && u.vegaIdActive);
+    if(!found){
+      result.classList.add('show');
+      result.innerHTML = `<span style="color:var(--debit); font-size:13.5px;">No active Vega ID found for "${escapeHtml(val)}"</span>`;
+      return;
+    }
+    result.classList.add('show');
+    result.innerHTML = `<span>${escapeHtml(found.name)} — ${escapeHtml(found.vegaId)}</span><button class="id-mini-btn primary" onclick="pickRecipient('${found.id}')">Send here</button>`;
+  }
+  function pickRecipient(id){
+    sendRecipientId = id;
+    const recipient = getUserById(id);
+    document.getElementById('sendToName').textContent = 'To: ' + recipient.name;
+    openSend();
+  }
+
+  /* ================= Send flow ================= */
+  let sendMode = 'manual';
+  let selected = {};
+  let sendTarget = 100;
+  function openSend(){
+    selected = {};
+    sendTarget = Number(document.getElementById('sendAmount').value) || 100;
+    document.getElementById('sendSuccess').classList.remove('show');
+    document.getElementById('sendFormArea').style.display = 'block';
+    hidePinPanels();
+    setSendMode('manual');
+    showScreen('send');
+  }
+  function setSendMode(mode){
+    sendMode = mode;
+    document.getElementById('modeManualTab').classList.toggle('active', mode==='manual');
+    document.getElementById('modeAutoTab').classList.toggle('active', mode==='auto');
+    document.getElementById('sendNotesGrid').style.display = mode==='manual' ? 'grid' : 'none';
+    document.getElementById('remainingBar').style.display = mode==='manual' ? 'flex' : 'none';
+    document.getElementById('autoResultArea').style.display = mode==='auto' ? 'block' : 'none';
+    selected = {};
+    hideBreakSuggest(); hidePinPanels();
+    if(mode==='auto'){ runAutoSelect(); } else { renderSendNotes(); }
+  }
+  function onSendAmountChange(){
+    sendTarget = Number(document.getElementById('sendAmount').value) || 0;
+    selected = {}; hideBreakSuggest(); hidePinPanels();
+    if(sendMode==='manual'){ renderSendNotes(); } else { runAutoSelect(); }
+  }
+  function myNotes(){ return getCurrentUser().vegaNotes; }
+  function remaining(){ const used = DENOMS.reduce((s,d)=> s + d*(selected[d]||0), 0); return sendTarget - used; }
+  function availableCount(d){ return (myNotes()[d]||0) - (selected[d]||0); }
+  function canMakeExact(target, notesMap){
+    const denoms = DENOMS.filter(d=> (notesMap[d]||0) > 0);
+    function rec(i, rem){
+      if(rem===0) return true;
+      if(i>=denoms.length || rem<0) return false;
+      const d = denoms[i], maxUse = notesMap[d]||0;
+      for(let use=0; use<=maxUse; use++){ if(rec(i+1, rem - d*use)) return true; }
+      return false;
+    }
+    return rec(0, target);
+  }
+  function renderSendNotes(){
+    const grid = document.getElementById('sendNotesGrid');
+    grid.innerHTML = '';
+    const rem = remaining();
+    document.getElementById('remainingVal').textContent = fmt(rem < 0 ? 0 : rem);
+    DENOMS.forEach(d=>{
+      const avail = availableCount(d);
+      const usable = avail > 0 && d <= rem;
+      const el = document.createElement('div');
+      el.className = 'send-note' + (usable ? ' usable' : ' disabled');
+      el.style.background = NOTE_COLOR[d];
+      el.innerHTML = `<div class="amt">₹${d}</div><div class="avail">${avail} left${selected[d] ? ' · ' + selected[d] + ' used' : ''}</div>`;
+      if(usable){ el.onclick = ()=> pickNote(d); }
+      grid.appendChild(el);
+    });
+    document.getElementById('sendConfirmBtn').disabled = rem !== 0;
+    hidePinPanels();
+    if(rem > 0){
+      const avail = {}; DENOMS.forEach(d=> avail[d] = availableCount(d));
+      if(!canMakeExact(rem, avail)){
+        const biggerAvail = DENOMS.filter(d=> avail[d] > 0 && d > rem);
+        const target = biggerAvail.length ? Math.min(...biggerAvail) : DENOMS.find(d=> avail[d] > 0);
+        if(target){ showBreakSuggest(rem, target); } else { hideBreakSuggest(); }
+      } else { hideBreakSuggest(); }
+    } else { hideBreakSuggest(); }
+  }
+  function pickNote(d){ selected[d] = (selected[d]||0) + 1; renderSendNotes(); }
+  function showBreakSuggest(rem, denom){
+    document.getElementById('breakMsg').textContent = `No exact match for ${fmt(rem)} with your current notes. Break a ₹${denom} note into smaller ones?`;
+    document.getElementById('breakSuggest').dataset.denom = denom;
+    document.getElementById('breakSuggest').classList.add('show');
+  }
+  function hideBreakSuggest(){ document.getElementById('breakSuggest').classList.remove('show'); }
+  function acceptBreak(){
+    const denom = Number(document.getElementById('breakSuggest').dataset.denom);
+    const notes = myNotes();
+    notes[denom] -= 1;
+    BREAK_MAP[denom].forEach(([sd,cnt])=>{ notes[sd] = (notes[sd]||0) + cnt; });
+    toast(`Broke a ₹${denom} note`);
+    if(sendMode==='manual'){ renderSendNotes(); } else { runAutoSelect(); }
+  }
+  function resetSend(){ selected = {}; hideBreakSuggest(); hidePinPanels(); renderSendNotes(); }
+  function findExactCombo(target, notesMap){
+    const denoms = DENOMS.filter(d=> (notesMap[d]||0) > 0);
+    let found = null;
+    function rec(i, rem, chosen){
+      if(found) return;
+      if(rem===0){ found = {...chosen}; return; }
+      if(i>=denoms.length || rem<0) return;
+      const d = denoms[i], maxUse = notesMap[d]||0;
+      for(let use=maxUse; use>=0; use--){ chosen[d]=use; rec(i+1, rem-d*use, chosen); if(found) return; }
+      delete chosen[d];
+    }
+    rec(0, target, {});
+    return found;
+  }
+  function runAutoSelect(){
+    hideBreakSuggest(); hidePinPanels();
+    const target = sendTarget;
+    const notesMap = myNotes();
+    const combo = findExactCombo(target, notesMap);
+    const grid = document.getElementById('autoNotesGrid');
+    grid.innerHTML = '';
+    if(combo){
+      selected = combo;
+      DENOMS.forEach(d=>{
+        if(combo[d] > 0){
+          const chip = document.createElement('div');
+          chip.className='note-chip'; chip.style.background=NOTE_COLOR[d];
+          chip.innerHTML = `<span class="badge">×${combo[d]}</span><div class="amt">₹${d}</div>`;
+          grid.appendChild(chip);
+        }
+      });
+      document.getElementById('sendConfirmBtn').disabled = false;
+    } else {
+      selected = {};
+      grid.innerHTML = '<p style="font-size:13px; color:var(--ink-400); grid-column:1/-1;">No exact combination found.</p>';
+      document.getElementById('sendConfirmBtn').disabled = true;
+      const avail = {}; DENOMS.forEach(d=> avail[d] = notesMap[d]||0);
+      const biggerAvail = DENOMS.filter(d=> avail[d] > 0 && d > target);
+      const bd = biggerAvail.length ? Math.min(...biggerAvail) : DENOMS.find(d=> avail[d] > 0);
+      if(bd){ showBreakSuggest(target, bd); }
+    }
+  }
+
+  /* ---- Vega PIN step ---- */
+  function hidePinPanels(){
+    document.getElementById('pinPanelCreate').classList.remove('show');
+    document.getElementById('pinPanelEnter').classList.remove('show');
+  }
+  function beginPinStep(){
+    const u = getCurrentUser();
+    hidePinPanels();
+    if(!u.vegaPin){
+      document.getElementById('pinCreate1').value=''; document.getElementById('pinCreate2').value='';
+      document.getElementById('pinCreateError').classList.remove('show');
+      document.getElementById('pinPanelCreate').classList.add('show');
+    } else {
+      document.getElementById('pinEnter').value='';
+      document.getElementById('pinEnterError').classList.remove('show');
+      document.getElementById('pinPanelEnter').classList.add('show');
+    }
+  }
+  function submitPinCreate(){
+    const p1 = document.getElementById('pinCreate1').value, p2 = document.getElementById('pinCreate2').value;
+    if(!/^\d{4}$/.test(p1)){ showAuthError('pinCreateError','PIN must be exactly 4 digits'); return; }
+    if(p1 !== p2){ showAuthError('pinCreateError','PINs do not match'); return; }
+    const u = getCurrentUser();
+    u.vegaPin = p1;
+    logAction(`${u.name} created their Vega PIN`);
+    executeSend();
+  }
+  function submitPinEnter(){
+    const p = document.getElementById('pinEnter').value;
+    const u = getCurrentUser();
+    if(p !== u.vegaPin){ showAuthError('pinEnterError','Incorrect Vega PIN'); return; }
+    executeSend();
+  }
+  function executeSend(){
+    const sender = getCurrentUser();
+    const recipient = getUserById(sendRecipientId);
+    DENOMS.forEach(d=>{
+      if(selected[d]){
+        sender.vegaNotes[d] -= selected[d];
+        recipient.vegaNotes[d] = (recipient.vegaNotes[d]||0) + selected[d];
+      }
+    });
+    addTxn(sender, 'debit', `Sent to ${recipient.name}`, sendTarget);
+    addTxn(recipient, 'credit', `Received from ${sender.name}`, sendTarget);
+    saveState();
+    hidePinPanels();
+    document.getElementById('sendFormArea').style.display = 'none';
+    document.getElementById('sendSuccessMsg').textContent = `${fmt(sendTarget)} sent to ${recipient.name}`;
+    document.getElementById('sendSuccess').classList.remove('show');
+    void document.getElementById('sendSuccess').offsetWidth;
+    document.getElementById('sendSuccess').classList.add('show');
+    setTimeout(()=>{ goVega(); }, 1700);
+  }
+
+  /* ================= Load flow ================= */
+  let loadCounts = {};
+  function openLoad(){
+    loadCounts = {}; DENOMS.forEach(d=> loadCounts[d]=0);
+    document.getElementById('loadSuccess').classList.remove('show');
+    document.getElementById('loadFormArea').style.display = 'block';
+    document.getElementById('loadError').classList.remove('show');
+    renderLoadSteppers();
+    showScreen('load');
+  }
+  function renderLoadSteppers(){
+    const wrap = document.getElementById('loadSteppers');
+    wrap.innerHTML = '';
+    DENOMS.forEach(d=>{
+      const row = document.createElement('div');
+      row.className = 'stepper-row';
+      row.innerHTML = `<div class="stepper-note"><div class="stepper-swatch" style="background:${NOTE_COLOR[d]}">₹${d}</div></div>
+        <div class="stepper-controls"><button onclick="stepLoad(${d}, -1)" aria-label="Decrease">−</button><span class="stepper-count" id="loadCount-${d}">0</span><button onclick="stepLoad(${d}, 1)" aria-label="Increase">+</button></div>`;
+      wrap.appendChild(row);
+    });
+    updateLoadTotal();
+  }
+  function stepLoad(d, delta){
+    loadCounts[d] = Math.max(0, (loadCounts[d]||0) + delta);
+    document.getElementById('loadCount-'+d).textContent = loadCounts[d];
+    updateLoadTotal();
+  }
+  function updateLoadTotal(){
+    const total = DENOMS.reduce((s,d)=> s + d*(loadCounts[d]||0), 0);
+    document.getElementById('loadTotalVal').textContent = fmt(total);
+    const u = getCurrentUser();
+    const err = document.getElementById('loadError');
+    if(total > u.balance){ err.textContent = `Exceeds your main account balance of ${fmt(u.balance)}`; err.classList.add('show'); }
+    else { err.classList.remove('show'); }
+    document.getElementById('loadConfirmBtn').disabled = total <= 0 || total > u.balance;
+  }
+  function confirmLoad(){
+    const u = getCurrentUser();
+    const total = DENOMS.reduce((s,d)=> s + d*(loadCounts[d]||0), 0);
+    if(total <= 0 || total > u.balance) return;
+    u.balance -= total;
+    DENOMS.forEach(d=>{ if(loadCounts[d] > 0){ u.vegaNotes[d] = (u.vegaNotes[d]||0) + loadCounts[d]; } });
+    addTxn(u, 'debit', 'Loaded VegaPay wallet', total);
+    saveState();
+    document.getElementById('loadFormArea').style.display = 'none';
+    document.getElementById('loadSuccessMsg').textContent = `${fmt(total)} moved from your main account, kept as separate notes`;
+    document.getElementById('loadSuccess').classList.remove('show');
+    void document.getElementById('loadSuccess').offsetWidth;
+    document.getElementById('loadSuccess').classList.add('show');
+    refreshHomeBalance();
+    setTimeout(()=>{ goVega(); }, 1700);
+  }
+
+  /* ================= History ================= */
+  let currentHistFilter = 'all';
+  function renderHistFilters(){
+    const wrap = document.getElementById('histFilters');
+    wrap.innerHTML = Object.keys(FILTER_RANGES).map(key=>
+      `<button class="hist-filter ${key===currentHistFilter?'active':''}" onclick="setHistFilter('${key}')">${FILTER_LABELS[key]}</button>`
+    ).join('');
+  }
+  function setHistFilter(key){ currentHistFilter = key; renderHistory(); }
+  function renderHistory(){
+    renderHistFilters();
+    const u = getCurrentUser();
+    const rangeMs = FILTER_RANGES[currentHistFilter];
+    const now = Date.now();
+    const filtered = u.transactions.filter(t=> rangeMs===Infinity || (now - t.ts) <= rangeMs);
+    document.getElementById('histCount').textContent = filtered.length;
+    const circulated = filtered.reduce((s,t)=> s + Math.abs(t.amount), 0);
+    document.getElementById('histCirculated').textContent = fmt(circulated);
+    document.getElementById('histBalance').textContent = fmt(u.balance);
+    const list = document.getElementById('histList');
+    list.innerHTML = filtered.length ? filtered.map(txnRowHtml).join('') : '<p class="txn-empty">No transactions in this period.</p>';
+  }
+
+  /* ================= Nav init ================= */
+  document.addEventListener('DOMContentLoaded', ()=>{});
+
+  seedIfNeeded();
+  populateQuestionSelects();
+  if(state.isAdminSession){
+    renderAdminPanel();
+    showScreen('admin-panel');
+  } else if(state.currentUserId && getCurrentUser()){
+    const u = getCurrentUser();
+    document.getElementById('greetName').textContent = u.name.split(' ')[0] || u.name;
+    document.getElementById('avatarInitial').textContent = (u.name[0]||'?').toUpperCase();
+    refreshHomeBalance();
+    goHome();
+  } else {
+    showScreen('auth');
+  }
+</script>
+
+</body>
+</html>
