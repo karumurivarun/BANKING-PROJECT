@@ -6,7 +6,6 @@
 <title>V Banking Services</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
     --paper:#F5F6F3; --card:#FFFFFF; --ink-900:#16202B; --ink-600:#4B5768; --ink-400:#8B93A0; --hairline:#E3E5DF;
@@ -304,7 +303,6 @@
     .auth-row2{grid-template-columns:1fr;}
   }
 </style>
-
 </head>
 <body>
 
@@ -639,12 +637,8 @@
 
 <script>
   /* ================= Constants ================= */
-  /* ================= Supabase Configuration ================= */
-const SUPABASE_URL = 'https://rggtkexsjszwbisuzfpz.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnZ3RrZXhzanN6d2Jpc3V6ZnB6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkyMDQ5MzcsImV4cCI6MjEwNDc4MDkzN30.R2_PBP7T2w0CWOnMoRtPeXTamWjyR1OYujjCw1mNDQM';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-const ADMIN_USER = 'admin', ADMIN_PASS = 'varun4037';
+  const STORAGE_KEY = 'vbanking_state_v2';
+  const ADMIN_USER = 'admin', ADMIN_PASS = 'admin123';
   const DENOMS = [500,200,100,50,20,10,5,2,1];
   const NOTE_COLOR = {500:'#4B2E83',200:'#1F6F78',100:'#B68A3D',50:'#B23A55',20:'#2F6FB0',10:'#3F8F5C',5:'#C0672E',2:'#5B6472',1:'#8A8272'};
   const BREAK_MAP = {500:[[200,2],[100,1]],200:[[100,2]],100:[[50,2]],50:[[20,2],[10,1]],20:[[10,2]],10:[[5,2]],5:[[2,2],[1,1]],2:[[1,2]]};
@@ -732,27 +726,16 @@ const ADMIN_USER = 'admin', ADMIN_PASS = 'varun4037';
     document.getElementById('signupError').classList.remove('show');
   }
   function showAuthError(id, msg){ const el=document.getElementById(id); el.textContent=msg; el.classList.add('show'); }
-  async function handleLogin(e){
-  e.preventDefault();
-  const username = document.getElementById('loginUsername').value.trim();
-  const password = document.getElementById('loginPassword').value;
-
-  const { data: users, error } = await supabaseClient
-    .from('users')
-    .select('*')
-    .eq('username', username)
-    .eq('password', password);
-
-  if(error || !users || users.length === 0){ 
-    showAuthError('loginError','Invalid username or password'); 
-    return; 
+  function handleLogin(e){
+    e.preventDefault();
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const user = state.users.find(u=>u.username.toLowerCase()===username.toLowerCase() && u.password===password);
+    if(!user){ showAuthError('loginError','Invalid username or password'); return; }
+    document.getElementById('loginError').classList.remove('show');
+    logAction(`${user.name} logged in`);
+    enterDashboard(user);
   }
-
-  const user = users[0];
-  document.getElementById('loginError').classList.remove('show');
-  logAction(`${user.name} logged in`);
-  enterDashboard(user);
-}
   function handleSignup(e){
     e.preventDefault();
     const name = document.getElementById('signupName').value.trim();
