@@ -6,6 +6,7 @@
 <title>V Banking Services</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
     --paper:#F5F6F3; --card:#FFFFFF; --ink-900:#16202B; --ink-600:#4B5768; --ink-400:#8B93A0; --hairline:#E3E5DF;
@@ -110,11 +111,18 @@
   .zone{background:var(--card); border:1px solid var(--hairline); border-radius:12px; padding:22px 22px 8px;}
   .zone h3{font-family:'Fraunces', serif; font-weight:500; font-size:15px; margin:0 0 16px; color:var(--ink-600);}
   .zone-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; padding-bottom:14px;}
+  .zone-grid-4{display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; padding-bottom:14px;}
   .zone-btn{display:flex; flex-direction:column; align-items:center; gap:9px; background:none; border:none; cursor:pointer; padding:10px 4px; border-radius:8px; color:var(--ink-900);}
   .zone-btn:hover{background:var(--paper);}
   .zone-icon{width:42px; height:42px; border-radius:50%; background:var(--brass-tint); display:flex; align-items:center; justify-content:center;}
   .zone-icon svg{width:19px; height:19px; stroke:var(--brass-500);}
   .zone-btn span{font-size:12px; text-align:center; line-height:1.3; color:var(--ink-600);}
+  .zone-icon.bank-icon{background:var(--vega-tint);}
+  .zone-icon.bank-icon svg{stroke:var(--vega-500);}
+
+  .chan-badge{display:inline-block; font-size:9px; font-weight:500; padding:2px 7px; border-radius:8px; margin-left:6px; vertical-align:middle; font-family:'IBM Plex Sans', sans-serif; letter-spacing:0.02em;}
+  .chan-vega{background:var(--vega-tint); color:var(--vega-700);}
+  .chan-bank{background:var(--brass-tint); color:var(--brass-500);}
 
   .vega-promo{position:relative; background:linear-gradient(135deg, var(--vega-600), var(--vega-500) 55%, var(--vega-400)); border-radius:14px; padding:28px 30px; margin-bottom:28px; color:#fff; overflow:hidden; cursor:pointer; border:none; text-align:left; width:100%; display:block;}
   .vega-promo::after{content:''; position:absolute; right:-60px; bottom:-80px; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.14), transparent 70%);}
@@ -297,6 +305,7 @@
     .sidebar{display:none;}
     .main{padding:24px 18px 90px;}
     .zones{grid-template-columns:1fr;}
+    .zone-grid-4{grid-template-columns:repeat(2, 1fr);}
     .notes-grid{grid-template-columns:repeat(3, 1fr);}
     .admin-grid{grid-template-columns:1fr;}
     .hist-stats{grid-template-columns:1fr;}
@@ -447,10 +456,11 @@
       <div class="zones">
         <div class="zone">
           <h3>Quick pay</h3>
-          <div class="zone-grid">
-            <button class="zone-btn" onclick="openSendPick('qr')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM19 19h2v2h-2z"/></svg></span><span>Scan QR</span></button>
-            <button class="zone-btn" onclick="openSendPick('username')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span><span>Pay to Person by Username</span></button>
-            <button class="zone-btn" onclick="openSendPick('vegaid')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/></svg></span><span>Vega ID</span></button>
+          <div class="zone-grid-4">
+            <button class="zone-btn" onclick="openSendPick('qr','vega')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM19 19h2v2h-2z"/></svg></span><span>Scan QR</span></button>
+            <button class="zone-btn" onclick="openSendPick('username','vega')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span><span>Pay to Person by Username</span></button>
+            <button class="zone-btn" onclick="openSendPick('vegaid','vega')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/></svg></span><span>Vega ID</span></button>
+            <button class="zone-btn" onclick="openSendPick('username','bank')"><span class="zone-icon bank-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></span><span>Send Money (Bank)</span></button>
           </div>
         </div>
         <div class="zone">
@@ -491,7 +501,7 @@
       <div class="notes-panel" id="notesPanel"><h4>Notes in your wallet</h4><div class="notes-grid" id="notesGrid"></div></div>
 
       <div class="vega-actions">
-        <button class="vega-act-btn" onclick="openSendPick('username')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></span><span>Send</span></button>
+        <button class="vega-act-btn" onclick="openSendPick('username','vega')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></span><span>Send</span></button>
         <button class="vega-act-btn" onclick="toast('Coming soon')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></span><span>Collect</span></button>
         <button class="vega-act-btn" onclick="openLoad()"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2M3 12h18"/></svg></span><span>Load</span></button>
         <button class="vega-act-btn" onclick="toast('Coming soon')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span><span>Redeem</span></button>
@@ -528,7 +538,7 @@
         <button class="recipient-tab" id="rtabQr" onclick="switchRecipientTab('qr')">By QR</button>
         <button class="recipient-tab" id="rtabVegaid" onclick="switchRecipientTab('vegaid')">By Vega ID</button>
       </div>
-      <div class="recipient-pane" id="paneUsername" id="paneUsername"><div id="userPickList"></div></div>
+      <div class="recipient-pane" id="paneUsername"><div id="userPickList"></div></div>
       <div class="recipient-pane" id="paneQr"><div class="qr-pick-grid" id="qrPickGrid"></div></div>
       <div class="recipient-pane" id="paneVegaid">
         <div class="vegaid-lookup"><input id="vegaidLookupInput" type="text" placeholder="e.g. meena@vegapay"><button class="id-mini-btn primary" onclick="lookupVegaId()">Find</button></div>
@@ -579,6 +589,33 @@
           <div class="confetti-dot" style="--dx:0px; --dy:75px; background:var(--brass-500);"></div>
         </div>
         <h3>Sent successfully</h3><p id="sendSuccessMsg"></p>
+      </div>
+    </div>
+
+    <!-- NORMAL BANK SEND (no VegaPay) -->
+    <div class="view" id="view-normal-send">
+      <div class="view-head"><button class="back-btn" onclick="goHome()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2>Send money (Bank)</h2></div>
+      <div class="contact-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span id="normalSendToName">To: —</span></div>
+      <div id="normalSendFormArea">
+        <p style="font-size:13.5px; color:var(--ink-600); margin:0 0 16px;">This is a plain transfer straight from your main Account Balance — no VegaPay wallet or notes involved.</p>
+        <div class="field-row"><label for="normalSendAmount">Amount to send</label><input type="number" id="normalSendAmount" value="5" min="1" oninput="updateNormalSendError()"></div>
+        <div class="load-error" id="normalSendError"></div>
+        <button class="primary-btn" id="normalSendConfirmBtn" onclick="executeNormalSend()">Send</button>
+      </div>
+      <div class="success-state" id="normalSendSuccess">
+        <div class="celebrate">
+          <div class="ring"></div><div class="ring ring2"></div>
+          <div class="core"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+          <div class="confetti-dot" style="--dx:-55px; --dy:-40px; background:var(--vega-500);"></div>
+          <div class="confetti-dot" style="--dx:55px; --dy:-40px; background:var(--brass-500);"></div>
+          <div class="confetti-dot" style="--dx:-70px; --dy:10px; background:var(--success);"></div>
+          <div class="confetti-dot" style="--dx:70px; --dy:10px; background:var(--vega-400);"></div>
+          <div class="confetti-dot" style="--dx:-35px; --dy:60px; background:var(--brass-400);"></div>
+          <div class="confetti-dot" style="--dx:35px; --dy:60px; background:var(--vega-500);"></div>
+          <div class="confetti-dot" style="--dx:0px; --dy:-70px; background:var(--success);"></div>
+          <div class="confetti-dot" style="--dx:0px; --dy:75px; background:var(--brass-500);"></div>
+        </div>
+        <h3>Sent successfully</h3><p id="normalSendSuccessMsg"></p>
       </div>
     </div>
 
@@ -636,9 +673,13 @@
 <div class="toast" id="toast"></div>
 
 <script>
+  /* ================= Supabase configuration ================= */
+  const SUPABASE_URL = 'https://rggtkexsjszwbisuzfpz.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnZ3RrZXhzanN6d2Jpc3V6ZnB6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkyMDQ5MzcsImV4cCI6MjEwNDc4MDkzN30.R2_PBP7T2w0CWOnMoRtPeXTamWjyR1OYujjCw1mNDQM';
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const ADMIN_USER = 'varun', ADMIN_PASS = 'Varun-4037';
+
   /* ================= Constants ================= */
-  const STORAGE_KEY = 'vbanking_state_v2';
-  const ADMIN_USER = 'admin', ADMIN_PASS = 'admin123';
   const DENOMS = [500,200,100,50,20,10,5,2,1];
   const NOTE_COLOR = {500:'#4B2E83',200:'#1F6F78',100:'#B68A3D',50:'#B23A55',20:'#2F6FB0',10:'#3F8F5C',5:'#C0672E',2:'#5B6472',1:'#8A8272'};
   const BREAK_MAP = {500:[[200,2],[100,1]],200:[[100,2]],100:[[50,2]],50:[[20,2],[10,1]],20:[[10,2]],10:[[5,2]],5:[[2,2],[1,1]],2:[[1,2]]};
@@ -653,39 +694,63 @@
   const FILTER_RANGES = {all:Infinity, '1d':1*86400000, '2d':2*86400000, '3d':3*86400000, '1w':7*86400000, '1m':30*86400000, '1y':365*86400000};
   const FILTER_LABELS = {all:'All', '1d':'1 day', '2d':'2 days', '3d':'3 days', '1w':'1 week', '1m':'1 month', '1y':'1 year'};
 
-  let state = null;
+  /* ================= App-level state (in memory; data itself lives in Supabase) ================= */
+  let currentUser = null;      // the logged-in user's row, mapped to camelCase
+  let isAdminSession = false;
+  let adminUsersCache = [];
+  let otherUsersCache = [];
+  let activityLog = [];
 
-  /* ================= Persistence ================= */
-  function loadState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; } catch(e){ return null; } }
-  function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-  function seedIfNeeded(){
-    const existing = loadState();
-    if(existing && existing.users && existing.users.length){ state = existing; return; }
-    state = {
-      users: [
-        {id:'u1', name:'Ravi Kumar', username:'ravi', password:'ravi123', balance:15250.50,
-         vegaNotes:{500:2,200:1,100:2,50:1,20:2,10:2,5:1,2:2,1:3}, vegaId:'ravi@vegapay', vegaIdActive:true, vegaPin:null,
-         securityQuestions:[{q:QUESTION_BANK[0],a:'chennai'},{q:QUESTION_BANK[1],a:'tommy'}], transactions:[]},
-        {id:'u2', name:'Meena Iyer', username:'meena', password:'meena123', balance:8400.00,
-         vegaNotes:{500:1,200:2,100:1,50:2,20:1,10:3,5:2,2:1,1:2}, vegaId:'meena@vegapay', vegaIdActive:true, vegaPin:null,
-         securityQuestions:[{q:QUESTION_BANK[2],a:'nair'},{q:QUESTION_BANK[3],a:'stmarys'}], transactions:[]},
-        {id:'u3', name:'Arjun Rao', username:'arjun', password:'arjun123', balance:32100.25,
-         vegaNotes:{500:3,200:0,100:2,50:1,20:2,10:1,5:1,2:2,1:1}, vegaId:'arjun@vegapay', vegaIdActive:true, vegaPin:null,
-         securityQuestions:[{q:QUESTION_BANK[4],a:'honda'},{q:QUESTION_BANK[5],a:'ramayana'}], transactions:[]}
-      ],
-      nextId:4, currentUserId:null, isAdminSession:false, log:[]
+  /* ================= Row <-> app object mapping ================= */
+  function mapUser(row){
+    return {
+      id: row.id,
+      name: row.name,
+      username: row.username,
+      password: row.password,
+      balance: Number(row.balance),
+      vegaNotes: row.vega_notes || {},
+      vegaId: row.vega_id,
+      vegaIdActive: row.vega_id_active,
+      vegaPin: row.vega_pin,
+      securityQuestions: row.security_questions
     };
-    saveState();
   }
-  function logAction(desc){ state.log.unshift({ts:new Date().toLocaleString('en-IN'), desc}); if(state.log.length>15) state.log.length=15; saveState(); }
-  function getCurrentUser(){ return state.users.find(u=>u.id===state.currentUserId); }
-  function getUserById(id){ return state.users.find(u=>u.id===id); }
+  function rowToTxnHtml(t){
+    const isCredit = t.type==='credit';
+    const iconPath = isCredit ? 'M7 17L17 7M17 17V7H7' : 'M17 7L7 17M7 7v10h10';
+    const tsLabel = new Date(t.created_at).toLocaleString('en-IN');
+    const isVega = t.description.startsWith('[VEGA]');
+    const cleanDesc = t.description.replace(/^\[VEGA\]\s*|^\[BANK\]\s*/, '');
+    const badge = isVega ? '<span class="chan-badge chan-vega">VegaPay</span>' : '<span class="chan-badge chan-bank">Bank</span>';
+    return `<div class="txn-row">
+      <div class="txn-dot ${isCredit?'credit':'debit'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="${iconPath}"/></svg></div>
+      <div class="txn-info"><div class="name">${escapeHtml(cleanDesc)}${badge}</div><div class="date">${tsLabel}</div></div>
+      <div class="txn-amt ${isCredit?'credit':'debit'}">${isCredit?'+':'-'}${fmt(t.amount)}</div>
+    </div>`;
+  }
+
+  /* ================= Local helpers ================= */
+  function getCurrentUser(){ return currentUser; }
   function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   function fmt(n){ return '₹' + Number(n).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2}); }
   function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._timer); t._timer=setTimeout(()=>t.classList.remove('show'), 2200); }
-  function addTxn(user, type, desc, amount){
-    user.transactions.unshift({id:'t'+Date.now()+Math.random().toString(16).slice(2), ts:Date.now(), tsLabel:new Date().toLocaleString('en-IN'), type, desc, amount});
-    if(user.transactions.length>500) user.transactions.length=500;
+
+  /* Admin activity log: kept client-side only (not financial data, not worth a table) */
+  function loadActivityLog(){ try{ activityLog = JSON.parse(localStorage.getItem('vbanking_admin_log')||'[]'); }catch(e){ activityLog=[]; } }
+  function saveActivityLog(){ localStorage.setItem('vbanking_admin_log', JSON.stringify(activityLog)); }
+  function logAction(desc){ activityLog.unshift({ts:new Date().toLocaleString('en-IN'), desc}); if(activityLog.length>15) activityLog.length=15; saveActivityLog(); }
+
+  /* Session: only the logged-in user's id is kept locally, full data always re-fetched from Supabase */
+  function saveSession(){ if(currentUser){ localStorage.setItem('vbanking_session_uid', String(currentUser.id)); } }
+  function clearSession(){ localStorage.removeItem('vbanking_session_uid'); }
+  async function restoreSession(){
+    const uid = localStorage.getItem('vbanking_session_uid');
+    if(!uid) return false;
+    const { data, error } = await supabaseClient.from('users').select('*').eq('id', uid).maybeSingle();
+    if(error || !data){ clearSession(); return false; }
+    currentUser = mapUser(data);
+    return true;
   }
 
   /* ================= Screen routing ================= */
@@ -693,7 +758,7 @@
     ['view-auth','view-forgot','view-admin-login','view-admin-panel'].forEach(id=>{
       document.getElementById(id).classList.toggle('active', id==='view-'+name);
     });
-    const dashboardNames = ['home','vega','send-pick','send','load','history'];
+    const dashboardNames = ['home','vega','send-pick','send','normal-send','load','history'];
     const inDashboard = dashboardNames.includes(name);
     document.getElementById('appShell').classList.toggle('shown', inDashboard);
     document.getElementById('bottomTabsShell').style.display = inDashboard ? '' : 'none';
@@ -726,17 +791,22 @@
     document.getElementById('signupError').classList.remove('show');
   }
   function showAuthError(id, msg){ const el=document.getElementById(id); el.textContent=msg; el.classList.add('show'); }
-  function handleLogin(e){
+
+  async function handleLogin(e){
     e.preventDefault();
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
-    const user = state.users.find(u=>u.username.toLowerCase()===username.toLowerCase() && u.password===password);
-    if(!user){ showAuthError('loginError','Invalid username or password'); return; }
+    const { data, error } = await supabaseClient.from('users').select('*').ilike('username', username).eq('password', password).maybeSingle();
+    if(error){ showAuthError('loginError','Connection error — check your Supabase setup'); return; }
+    if(!data){ showAuthError('loginError','Invalid username or password'); return; }
     document.getElementById('loginError').classList.remove('show');
-    logAction(`${user.name} logged in`);
-    enterDashboard(user);
+    currentUser = mapUser(data);
+    saveSession();
+    logAction(`${currentUser.name} logged in`);
+    enterDashboard();
   }
-  function handleSignup(e){
+
+  async function handleSignup(e){
     e.preventDefault();
     const name = document.getElementById('signupName').value.trim();
     const username = document.getElementById('signupUsername').value.trim();
@@ -747,40 +817,47 @@
     if(!name || !username || !password || !password2 || !a1 || !a2){ showAuthError('signupError','Please fill in every field'); return; }
     if(password !== password2){ showAuthError('signupError','Passwords do not match'); return; }
     if(q1 === q2){ showAuthError('signupError','Please choose two different security questions'); return; }
-    if(state.users.some(u=>u.username.toLowerCase()===username.toLowerCase())){ showAuthError('signupError','That username is already taken'); return; }
-    document.getElementById('signupError').classList.remove('show');
-    const user = {
-      id:'u'+state.nextId, name, username, password, balance:500,
-      vegaNotes:{}, vegaId:username.toLowerCase()+'@vegapay', vegaIdActive:true, vegaPin:null,
-      securityQuestions:[{q:q1,a:a1.toLowerCase()},{q:q2,a:a2.toLowerCase()}], transactions:[]
+
+    const { data: existing, error: checkErr } = await supabaseClient.from('users').select('id').ilike('username', username);
+    if(checkErr){ showAuthError('signupError','Connection error — check your Supabase setup'); return; }
+    if(existing && existing.length){ showAuthError('signupError','That username is already taken'); return; }
+
+    const newRow = {
+      name, username, password, balance:500,
+      vega_notes:{}, vega_id: username.toLowerCase()+'@vegapay', vega_id_active:true, vega_pin:null,
+      security_questions:[{q:q1,a:a1.toLowerCase()},{q:q2,a:a2.toLowerCase()}]
     };
-    state.nextId += 1;
-    state.users.push(user);
+    const { data: inserted, error: insErr } = await supabaseClient.from('users').insert(newRow).select().single();
+    if(insErr || !inserted){ showAuthError('signupError','Could not create account — check your Supabase setup'); return; }
+    document.getElementById('signupError').classList.remove('show');
+    currentUser = mapUser(inserted);
+    saveSession();
     logAction(`New account created: ${name} (@${username}) — ₹500 cashback applied`);
     toast('Account created — ₹500 cashback added!');
-    enterDashboard(user);
+    enterDashboard();
   }
-  function enterDashboard(user){
-    state.currentUserId = user.id; state.isAdminSession = false; saveState();
+
+  function enterDashboard(){
+    isAdminSession = false;
     homeHidden = true; vegaHidden = true;
-    document.getElementById('greetName').textContent = user.name.split(' ')[0] || user.name;
-    document.getElementById('avatarInitial').textContent = (user.name[0]||'?').toUpperCase();
+    document.getElementById('greetName').textContent = currentUser.name.split(' ')[0] || currentUser.name;
+    document.getElementById('avatarInitial').textContent = (currentUser.name[0]||'?').toUpperCase();
     refreshHomeBalance();
     goHome();
   }
   function logout(){
-    const u = getCurrentUser();
-    logAction(`${u ? u.name : 'User'} logged out`);
-    state.currentUserId = null; saveState();
+    logAction(`${currentUser ? currentUser.name : 'User'} logged out`);
+    currentUser = null;
+    clearSession();
     document.getElementById('loginUsername').value=''; document.getElementById('loginPassword').value='';
     switchAuthTab('login');
     showScreen('auth');
   }
 
   /* ================= Forgot password ================= */
-  let fpUserId = null;
+  let fpUser = null;
   function goForgotPassword(){
-    fpUserId = null;
+    fpUser = null;
     document.getElementById('fpUsername').value='';
     document.getElementById('fpA1').value=''; document.getElementById('fpA2').value='';
     document.getElementById('fpNewPass').value=''; document.getElementById('fpNewPass2').value='';
@@ -790,36 +867,35 @@
     document.getElementById('fpStage3').classList.remove('active-stage');
     showScreen('forgot');
   }
-  function handleForgotStage1(){
+  async function handleForgotStage1(){
     const username = document.getElementById('fpUsername').value.trim();
-    const user = state.users.find(u=>u.username.toLowerCase()===username.toLowerCase());
-    if(!user){ showAuthError('fpError1','No account found with that username'); return; }
-    if(!user.securityQuestions || user.securityQuestions.length < 2){ showAuthError('fpError1','No recovery info on file for this account. Contact admin.'); return; }
+    const { data, error } = await supabaseClient.from('users').select('*').ilike('username', username).maybeSingle();
+    if(error || !data){ showAuthError('fpError1','No account found with that username'); return; }
+    const u = mapUser(data);
+    if(!u.securityQuestions || u.securityQuestions.length < 2){ showAuthError('fpError1','No recovery info on file for this account. Contact admin.'); return; }
     document.getElementById('fpError1').classList.remove('show');
-    fpUserId = user.id;
-    document.getElementById('fpQ1text').textContent = user.securityQuestions[0].q;
-    document.getElementById('fpQ2text').textContent = user.securityQuestions[1].q;
+    fpUser = u;
+    document.getElementById('fpQ1text').textContent = u.securityQuestions[0].q;
+    document.getElementById('fpQ2text').textContent = u.securityQuestions[1].q;
     document.getElementById('fpStage1').classList.remove('active-stage');
     document.getElementById('fpStage2').classList.add('active-stage');
   }
   function handleForgotStage2(){
-    const user = getUserById(fpUserId);
     const a1 = document.getElementById('fpA1').value.trim().toLowerCase();
     const a2 = document.getElementById('fpA2').value.trim().toLowerCase();
-    if(a1 !== user.securityQuestions[0].a || a2 !== user.securityQuestions[1].a){
+    if(a1 !== fpUser.securityQuestions[0].a || a2 !== fpUser.securityQuestions[1].a){
       showAuthError('fpError2','One or both answers are incorrect'); return;
     }
     document.getElementById('fpError2').classList.remove('show');
     document.getElementById('fpStage2').classList.remove('active-stage');
     document.getElementById('fpStage3').classList.add('active-stage');
   }
-  function handleForgotStage3(){
+  async function handleForgotStage3(){
     const p1 = document.getElementById('fpNewPass').value, p2 = document.getElementById('fpNewPass2').value;
     if(!p1 || p1 !== p2){ showAuthError('fpError3','Passwords do not match'); return; }
-    const user = getUserById(fpUserId);
-    user.password = p1;
-    logAction(`${user.name} reset their password via security questions`);
-    saveState();
+    const { error } = await supabaseClient.from('users').update({ password: p1 }).eq('id', fpUser.id);
+    if(error){ showAuthError('fpError3','Could not reset password — try again'); return; }
+    logAction(`${fpUser.name} reset their password via security questions`);
     toast('Password reset — you can log in now');
     switchAuthTab('login');
     showScreen('auth');
@@ -832,7 +908,7 @@
     const p = document.getElementById('adminPassword').value;
     if(u===ADMIN_USER && p===ADMIN_PASS){
       document.getElementById('adminError').classList.remove('show');
-      state.isAdminSession = true; state.currentUserId = null; saveState();
+      isAdminSession = true;
       logAction('Admin logged in');
       renderAdminPanel();
       showScreen('admin-panel');
@@ -840,53 +916,60 @@
   }
   function adminLogout(){
     logAction('Admin logged out');
-    state.isAdminSession = false; saveState();
+    isAdminSession = false;
     document.getElementById('adminUsername').value=''; document.getElementById('adminPassword').value='';
     showScreen('auth');
   }
-  function renderAdminPanel(){
+  async function renderAdminPanel(){
     const tbody = document.getElementById('adminUsersBody');
+    const { data, error } = await supabaseClient.from('users').select('*').order('id');
+    if(error){ tbody.innerHTML = '<tr><td colspan="4">Could not load users — check your Supabase setup</td></tr>'; return; }
+    adminUsersCache = data.map(mapUser);
     tbody.innerHTML = '';
-    state.users.forEach(u=>{
+    adminUsersCache.forEach(u=>{
       const tr = document.createElement('tr');
       tr.innerHTML = `<td>${escapeHtml(u.name)}</td><td>@${escapeHtml(u.username)}</td>
         <td><input type="number" class="admin-balance-input" id="bal-${u.id}" value="${u.balance}" step="0.01"></td>
-        <td><button class="admin-mini-btn" onclick="saveBalance('${u.id}')">Save</button><button class="admin-mini-btn danger" onclick="deleteUser('${u.id}')">Delete</button></td>`;
+        <td><button class="admin-mini-btn" onclick="saveBalance(${u.id})">Save</button><button class="admin-mini-btn danger" onclick="deleteUser(${u.id})">Delete</button></td>`;
       tbody.appendChild(tr);
     });
     const log = document.getElementById('adminLog');
-    log.innerHTML = state.log.length ? state.log.map(l=>`<div class="log-row"><span class="log-time">${l.ts}</span><span>${escapeHtml(l.desc)}</span></div>`).join('') : '<p style="color:var(--ink-400); font-size:13px;">No activity yet.</p>';
+    log.innerHTML = activityLog.length ? activityLog.map(l=>`<div class="log-row"><span class="log-time">${l.ts}</span><span>${escapeHtml(l.desc)}</span></div>`).join('') : '<p style="color:var(--ink-400); font-size:13px;">No activity yet.</p>';
   }
-  function saveBalance(id){
+  async function saveBalance(id){
     const input = document.getElementById('bal-'+id);
     const val = Number(input.value);
     if(isNaN(val) || val<0){ toast('Enter a valid balance'); return; }
-    const u = state.users.find(x=>x.id===id);
-    u.balance = val;
-    logAction(`Admin updated balance for ${u.name} to ${fmt(val)}`);
+    const { error } = await supabaseClient.from('users').update({ balance: val }).eq('id', id);
+    if(error){ toast('Could not update balance'); return; }
+    const u = adminUsersCache.find(x=>x.id===id);
+    logAction(`Admin updated balance for ${u?u.name:id} to ${fmt(val)}`);
     toast('Balance updated');
     renderAdminPanel();
   }
-  function deleteUser(id){
-    const u = state.users.find(x=>x.id===id);
+  async function deleteUser(id){
+    const u = adminUsersCache.find(x=>x.id===id);
     if(!u) return;
     if(!confirm(`Delete ${u.name}'s account? This cannot be undone.`)) return;
-    state.users = state.users.filter(x=>x.id!==id);
+    const { error } = await supabaseClient.from('users').delete().eq('id', id);
+    if(error){ toast('Could not delete user'); return; }
     logAction(`Admin deleted account: ${u.name} (@${u.username})`);
     toast('User deleted');
     renderAdminPanel();
   }
-  function handleAdminAddUser(e){
+  async function handleAdminAddUser(e){
     e.preventDefault();
     const name = document.getElementById('newUserName').value.trim();
     const username = document.getElementById('newUserUsername').value.trim();
     const password = document.getElementById('newUserPassword').value;
     const balance = Number(document.getElementById('newUserBalance').value) || 0;
     if(!name || !username || !password){ toast('Fill in every field'); return; }
-    if(state.users.some(u=>u.username.toLowerCase()===username.toLowerCase())){ toast('Username already exists'); return; }
-    const user = {id:'u'+state.nextId, name, username, password, balance, vegaNotes:{}, vegaId:username.toLowerCase()+'@vegapay', vegaIdActive:true, vegaPin:null, securityQuestions:null, transactions:[]};
-    state.nextId += 1;
-    state.users.push(user);
+    const { data: existing } = await supabaseClient.from('users').select('id').ilike('username', username);
+    if(existing && existing.length){ toast('Username already exists'); return; }
+    const { error } = await supabaseClient.from('users').insert({
+      name, username, password, balance, vega_notes:{}, vega_id: username.toLowerCase()+'@vegapay', vega_id_active:true, vega_pin:null, security_questions:null
+    });
+    if(error){ toast('Could not add user'); return; }
     logAction(`Admin added user: ${name} (@${username}) with ${fmt(balance)}`);
     toast('User added');
     document.getElementById('adminAddForm').reset();
@@ -895,37 +978,28 @@
 
   /* ================= Home balance & recent txns ================= */
   let homeHidden = true;
-  function refreshHomeBalance(){ const u=getCurrentUser(); document.getElementById('homeBalanceText').textContent = homeHidden ? '••••••' : fmt(u?u.balance:0); }
+  function refreshHomeBalance(){ document.getElementById('homeBalanceText').textContent = homeHidden ? '••••••' : fmt(currentUser?currentUser.balance:0); }
   function toggleHomeBalance(){ homeHidden = !homeHidden; refreshHomeBalance(); }
-  function txnRowHtml(t){
-    const isCredit = t.type==='credit';
-    const iconPath = isCredit ? 'M7 17L17 7M17 17V7H7' : 'M17 7L7 17M7 7v10h10';
-    return `<div class="txn-row">
-      <div class="txn-dot ${isCredit?'credit':'debit'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="${iconPath}"/></svg></div>
-      <div class="txn-info"><div class="name">${escapeHtml(t.desc)}</div><div class="date">${t.tsLabel}</div></div>
-      <div class="txn-amt ${isCredit?'credit':'debit'}">${isCredit?'+':'-'}${fmt(t.amount)}</div>
-    </div>`;
-  }
-  function renderHomeTxns(){
-    const u = getCurrentUser(); if(!u) return;
+  async function renderHomeTxns(){
     const wrap = document.getElementById('homeTxnList');
-    const recent = u.transactions.slice(0,3);
-    wrap.innerHTML = recent.length ? recent.map(txnRowHtml).join('') : '<p class="txn-empty">No transactions yet — try sending or loading VegaPay.</p>';
+    if(!currentUser) return;
+    const { data, error } = await supabaseClient.from('transactions').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:false}).limit(3);
+    if(error || !data || !data.length){ wrap.innerHTML = '<p class="txn-empty">No transactions yet — try sending or loading VegaPay.</p>'; return; }
+    wrap.innerHTML = data.map(rowToTxnHtml).join('');
   }
 
   /* ================= VegaPay wallet ================= */
   let vegaHidden = true;
   function calcBalance(notes){ return DENOMS.reduce((s,d)=> s + d*(notes[d]||0), 0); }
-  function refreshVegaBalance(){ const u=getCurrentUser(); const bal=calcBalance(u.vegaNotes); document.getElementById('vegaBalanceText').textContent = vegaHidden ? '••••••' : fmt(bal); }
+  function refreshVegaBalance(){ const bal=calcBalance(currentUser.vegaNotes); document.getElementById('vegaBalanceText').textContent = vegaHidden ? '••••••' : fmt(bal); }
   function toggleVegaBalance(){ vegaHidden = !vegaHidden; refreshVegaBalance(); }
   function toggleNotesPanel(){ document.getElementById('notesPanel').classList.toggle('open'); }
   function renderNotesGrid(){
     refreshVegaBalance();
-    const u = getCurrentUser();
     const grid = document.getElementById('notesGrid');
     grid.innerHTML = '';
     DENOMS.forEach(d=>{
-      const count = u.vegaNotes[d]||0;
+      const count = currentUser.vegaNotes[d]||0;
       const chip = document.createElement('div');
       chip.className='note-chip'; chip.style.background=NOTE_COLOR[d];
       chip.innerHTML = `<span class="badge">×${count}</span><div class="amt">₹${d}</div>`;
@@ -947,51 +1021,59 @@
 
   /* ---- Vega ID management ---- */
   function renderMyIdCard(){
-    const u = getCurrentUser();
-    document.getElementById('myQrGrid').innerHTML = qrGridHtml(u.vegaId);
-    document.getElementById('myVegaIdText').textContent = u.vegaId;
-    document.getElementById('myVegaIdStatus').textContent = u.vegaIdActive ? 'Active — others can pay you using this ID' : 'Inactive — this ID cannot receive payments right now';
-    document.getElementById('vegaIdToggle').classList.toggle('on', u.vegaIdActive);
+    document.getElementById('myQrGrid').innerHTML = qrGridHtml(currentUser.vegaId);
+    document.getElementById('myVegaIdText').textContent = currentUser.vegaId;
+    document.getElementById('myVegaIdStatus').textContent = currentUser.vegaIdActive ? 'Active — others can pay you using this ID' : 'Inactive — this ID cannot receive payments right now';
+    document.getElementById('vegaIdToggle').classList.toggle('on', currentUser.vegaIdActive);
     document.getElementById('idEditRow').classList.remove('open');
     document.getElementById('idAvailMsg').textContent = '';
   }
-  function toggleVegaIdActive(){
-    const u = getCurrentUser();
-    u.vegaIdActive = !u.vegaIdActive;
-    logAction(`${u.name} set their Vega ID to ${u.vegaIdActive?'active':'inactive'}`);
+  async function toggleVegaIdActive(){
+    const newVal = !currentUser.vegaIdActive;
+    const { error } = await supabaseClient.from('users').update({ vega_id_active: newVal }).eq('id', currentUser.id);
+    if(error){ toast('Could not update — try again'); return; }
+    currentUser.vegaIdActive = newVal;
+    logAction(`${currentUser.name} set their Vega ID to ${newVal?'active':'inactive'}`);
     renderMyIdCard();
   }
   function toggleIdEdit(){
     const row = document.getElementById('idEditRow');
     row.classList.toggle('open');
-    document.getElementById('idEditInput').value = getCurrentUser().vegaId;
+    document.getElementById('idEditInput').value = currentUser.vegaId;
     document.getElementById('idAvailMsg').textContent = '';
   }
-  function checkIdAvailability(){
+  async function checkIdAvailability(){
     const val = document.getElementById('idEditInput').value.trim().toLowerCase();
-    const u = getCurrentUser();
     const msg = document.getElementById('idAvailMsg');
     if(!val){ msg.textContent='Enter an ID to check'; msg.className='id-avail-msg bad'; return; }
-    const taken = state.users.some(x=>x.id!==u.id && x.vegaId.toLowerCase()===val);
-    if(taken){ msg.textContent='Already taken — try another'; msg.className='id-avail-msg bad'; }
+    const { data, error } = await supabaseClient.from('users').select('id').ilike('vega_id', val).neq('id', currentUser.id);
+    if(error){ msg.textContent='Could not check — try again'; msg.className='id-avail-msg bad'; return; }
+    if(data && data.length){ msg.textContent='Already taken — try another'; msg.className='id-avail-msg bad'; }
     else { msg.textContent='Available'; msg.className='id-avail-msg ok'; }
   }
-  function saveVegaId(){
+  async function saveVegaId(){
     const val = document.getElementById('idEditInput').value.trim().toLowerCase();
-    const u = getCurrentUser();
     if(!val){ toast('Enter a Vega ID'); return; }
-    const taken = state.users.some(x=>x.id!==u.id && x.vegaId.toLowerCase()===val);
-    if(taken){ toast('That Vega ID is already taken'); return; }
-    u.vegaId = val;
-    logAction(`${u.name} updated their Vega ID to ${val}`);
+    const { data: taken } = await supabaseClient.from('users').select('id').ilike('vega_id', val).neq('id', currentUser.id);
+    if(taken && taken.length){ toast('That Vega ID is already taken'); return; }
+    const { error } = await supabaseClient.from('users').update({ vega_id: val }).eq('id', currentUser.id);
+    if(error){ toast('Could not update — try again'); return; }
+    currentUser.vegaId = val;
+    logAction(`${currentUser.name} updated their Vega ID to ${val}`);
     toast('Vega ID updated');
     renderMyIdCard();
   }
 
   /* ================= Recipient picking ================= */
   let sendRecipientId = null;
-  function openSendPick(defaultTab){
+  let sendPickMode = 'vega';
+  async function openSendPick(defaultTab, mode){
+    sendPickMode = mode || 'vega';
     switchRecipientTab(defaultTab);
+    document.getElementById('userPickList').innerHTML = '<p class="txn-empty">Loading…</p>';
+    document.getElementById('qrPickGrid').innerHTML = '';
+    const { data, error } = await supabaseClient.from('users').select('*').neq('id', currentUser.id);
+    otherUsersCache = (error || !data) ? [] : data.map(mapUser);
     renderUserPickList();
     renderQrPickGrid();
     document.getElementById('vegaidLookupInput').value = '';
@@ -1006,43 +1088,47 @@
     document.getElementById('paneQr').classList.toggle('active', tab==='qr');
     document.getElementById('paneVegaid').classList.toggle('active', tab==='vegaid');
   }
-  function otherUsers(){ const me=getCurrentUser(); return state.users.filter(u=>u.id!==me.id); }
   function renderUserPickList(){
     const wrap = document.getElementById('userPickList');
-    const others = otherUsers();
-    wrap.innerHTML = others.length ? others.map(u=>`
-      <div class="user-pick-row" onclick="pickRecipient('${u.id}')">
+    wrap.innerHTML = otherUsersCache.length ? otherUsersCache.map(u=>`
+      <div class="user-pick-row" onclick="pickRecipient(${u.id})">
         <div class="user-pick-avatar">${(u.name[0]||'?').toUpperCase()}</div>
         <div><div>${escapeHtml(u.name)}</div><div class="uname">@${escapeHtml(u.username)}</div></div>
       </div>`).join('') : '<p class="txn-empty">No other users yet.</p>';
   }
   function renderQrPickGrid(){
     const wrap = document.getElementById('qrPickGrid');
-    const others = otherUsers();
-    wrap.innerHTML = others.length ? others.map(u=>`
-      <button class="qr-tile" onclick="pickRecipient('${u.id}')">
+    wrap.innerHTML = otherUsersCache.length ? otherUsersCache.map(u=>`
+      <button class="qr-tile" onclick="pickRecipient(${u.id})">
         <div class="qr-grid">${qrGridHtml(u.vegaId)}</div>
         <span>${escapeHtml(u.name)}</span>
       </button>`).join('') : '<p class="txn-empty">No other users yet.</p>';
   }
-  function lookupVegaId(){
+  async function lookupVegaId(){
     const val = document.getElementById('vegaidLookupInput').value.trim().toLowerCase();
     const result = document.getElementById('vegaidLookupResult');
     if(!val){ toast('Enter a Vega ID'); return; }
-    const found = otherUsers().find(u=>u.vegaId.toLowerCase()===val && u.vegaIdActive);
-    if(!found){
+    const { data, error } = await supabaseClient.from('users').select('*').ilike('vega_id', val).eq('vega_id_active', true).neq('id', currentUser.id).maybeSingle();
+    if(error || !data){
       result.classList.add('show');
       result.innerHTML = `<span style="color:var(--debit); font-size:13.5px;">No active Vega ID found for "${escapeHtml(val)}"</span>`;
       return;
     }
+    const found = mapUser(data);
+    if(!otherUsersCache.some(u=>u.id===found.id)) otherUsersCache.push(found);
     result.classList.add('show');
-    result.innerHTML = `<span>${escapeHtml(found.name)} — ${escapeHtml(found.vegaId)}</span><button class="id-mini-btn primary" onclick="pickRecipient('${found.id}')">Send here</button>`;
+    result.innerHTML = `<span>${escapeHtml(found.name)} — ${escapeHtml(found.vegaId)}</span><button class="id-mini-btn primary" onclick="pickRecipient(${found.id})">Send here</button>`;
   }
   function pickRecipient(id){
     sendRecipientId = id;
-    const recipient = getUserById(id);
-    document.getElementById('sendToName').textContent = 'To: ' + recipient.name;
-    openSend();
+    const recipient = otherUsersCache.find(u=>u.id===id);
+    if(sendPickMode === 'bank'){
+      document.getElementById('normalSendToName').textContent = 'To: ' + (recipient?recipient.name:'—');
+      openNormalSend();
+    } else {
+      document.getElementById('sendToName').textContent = 'To: ' + (recipient?recipient.name:'—');
+      openSend();
+    }
   }
 
   /* ================= Send flow ================= */
@@ -1074,7 +1160,7 @@
     selected = {}; hideBreakSuggest(); hidePinPanels();
     if(sendMode==='manual'){ renderSendNotes(); } else { runAutoSelect(); }
   }
-  function myNotes(){ return getCurrentUser().vegaNotes; }
+  function myNotes(){ return currentUser.vegaNotes; }
   function remaining(){ const used = DENOMS.reduce((s,d)=> s + d*(selected[d]||0), 0); return sendTarget - used; }
   function availableCount(d){ return (myNotes()[d]||0) - (selected[d]||0); }
   function canMakeExact(target, notesMap){
@@ -1179,9 +1265,8 @@
     document.getElementById('pinPanelEnter').classList.remove('show');
   }
   function beginPinStep(){
-    const u = getCurrentUser();
     hidePinPanels();
-    if(!u.vegaPin){
+    if(!currentUser.vegaPin){
       document.getElementById('pinCreate1').value=''; document.getElementById('pinCreate2').value='';
       document.getElementById('pinCreateError').classList.remove('show');
       document.getElementById('pinPanelCreate').classList.add('show');
@@ -1191,33 +1276,40 @@
       document.getElementById('pinPanelEnter').classList.add('show');
     }
   }
-  function submitPinCreate(){
+  async function submitPinCreate(){
     const p1 = document.getElementById('pinCreate1').value, p2 = document.getElementById('pinCreate2').value;
     if(!/^\d{4}$/.test(p1)){ showAuthError('pinCreateError','PIN must be exactly 4 digits'); return; }
     if(p1 !== p2){ showAuthError('pinCreateError','PINs do not match'); return; }
-    const u = getCurrentUser();
-    u.vegaPin = p1;
-    logAction(`${u.name} created their Vega PIN`);
+    const { error } = await supabaseClient.from('users').update({ vega_pin: p1 }).eq('id', currentUser.id);
+    if(error){ showAuthError('pinCreateError','Could not save PIN — try again'); return; }
+    currentUser.vegaPin = p1;
+    logAction(`${currentUser.name} created their Vega PIN`);
     executeSend();
   }
   function submitPinEnter(){
     const p = document.getElementById('pinEnter').value;
-    const u = getCurrentUser();
-    if(p !== u.vegaPin){ showAuthError('pinEnterError','Incorrect Vega PIN'); return; }
+    if(p !== currentUser.vegaPin){ showAuthError('pinEnterError','Incorrect Vega PIN'); return; }
     executeSend();
   }
-  function executeSend(){
-    const sender = getCurrentUser();
-    const recipient = getUserById(sendRecipientId);
+  async function executeSend(){
+    const recipient = otherUsersCache.find(u=>u.id===sendRecipientId);
+    if(!recipient){ toast('Recipient not found'); return; }
+    const newSenderNotes = { ...currentUser.vegaNotes };
+    const newRecipientNotes = { ...recipient.vegaNotes };
     DENOMS.forEach(d=>{
       if(selected[d]){
-        sender.vegaNotes[d] -= selected[d];
-        recipient.vegaNotes[d] = (recipient.vegaNotes[d]||0) + selected[d];
+        newSenderNotes[d] = (newSenderNotes[d]||0) - selected[d];
+        newRecipientNotes[d] = (newRecipientNotes[d]||0) + selected[d];
       }
     });
-    addTxn(sender, 'debit', `Sent to ${recipient.name}`, sendTarget);
-    addTxn(recipient, 'credit', `Received from ${sender.name}`, sendTarget);
-    saveState();
+    const { error: err1 } = await supabaseClient.from('users').update({ vega_notes: newSenderNotes }).eq('id', currentUser.id);
+    const { error: err2 } = await supabaseClient.from('users').update({ vega_notes: newRecipientNotes }).eq('id', recipient.id);
+    if(err1 || err2){ toast('Could not complete transfer — try again'); return; }
+    await supabaseClient.from('transactions').insert([
+      { user_id: currentUser.id, type:'debit', description:`[VEGA] Sent to ${recipient.name}`, amount: sendTarget },
+      { user_id: recipient.id, type:'credit', description:`[VEGA] Received from ${currentUser.name}`, amount: sendTarget }
+    ]);
+    currentUser.vegaNotes = newSenderNotes;
     hidePinPanels();
     document.getElementById('sendFormArea').style.display = 'none';
     document.getElementById('sendSuccessMsg').textContent = `${fmt(sendTarget)} sent to ${recipient.name}`;
@@ -1257,20 +1349,22 @@
   function updateLoadTotal(){
     const total = DENOMS.reduce((s,d)=> s + d*(loadCounts[d]||0), 0);
     document.getElementById('loadTotalVal').textContent = fmt(total);
-    const u = getCurrentUser();
     const err = document.getElementById('loadError');
-    if(total > u.balance){ err.textContent = `Exceeds your main account balance of ${fmt(u.balance)}`; err.classList.add('show'); }
+    if(total > currentUser.balance){ err.textContent = `Exceeds your main account balance of ${fmt(currentUser.balance)}`; err.classList.add('show'); }
     else { err.classList.remove('show'); }
-    document.getElementById('loadConfirmBtn').disabled = total <= 0 || total > u.balance;
+    document.getElementById('loadConfirmBtn').disabled = total <= 0 || total > currentUser.balance;
   }
-  function confirmLoad(){
-    const u = getCurrentUser();
+  async function confirmLoad(){
     const total = DENOMS.reduce((s,d)=> s + d*(loadCounts[d]||0), 0);
-    if(total <= 0 || total > u.balance) return;
-    u.balance -= total;
-    DENOMS.forEach(d=>{ if(loadCounts[d] > 0){ u.vegaNotes[d] = (u.vegaNotes[d]||0) + loadCounts[d]; } });
-    addTxn(u, 'debit', 'Loaded VegaPay wallet', total);
-    saveState();
+    if(total <= 0 || total > currentUser.balance) return;
+    const newBalance = currentUser.balance - total;
+    const newNotes = { ...currentUser.vegaNotes };
+    DENOMS.forEach(d=>{ if(loadCounts[d] > 0){ newNotes[d] = (newNotes[d]||0) + loadCounts[d]; } });
+    const { error } = await supabaseClient.from('users').update({ balance: newBalance, vega_notes: newNotes }).eq('id', currentUser.id);
+    if(error){ toast('Could not load wallet — try again'); return; }
+    await supabaseClient.from('transactions').insert({ user_id: currentUser.id, type:'debit', description:'[VEGA] Loaded VegaPay wallet', amount: total });
+    currentUser.balance = newBalance;
+    currentUser.vegaNotes = newNotes;
     document.getElementById('loadFormArea').style.display = 'none';
     document.getElementById('loadSuccessMsg').textContent = `${fmt(total)} moved from your main account, kept as separate notes`;
     document.getElementById('loadSuccess').classList.remove('show');
@@ -1278,6 +1372,45 @@
     document.getElementById('loadSuccess').classList.add('show');
     refreshHomeBalance();
     setTimeout(()=>{ goVega(); }, 1700);
+  }
+
+  /* ================= Normal bank transfer (no VegaPay) ================= */
+  function openNormalSend(){
+    document.getElementById('normalSendAmount').value = 5;
+    document.getElementById('normalSendSuccess').classList.remove('show');
+    document.getElementById('normalSendFormArea').style.display = 'block';
+    updateNormalSendError();
+    showScreen('normal-send');
+  }
+  function updateNormalSendError(){
+    const amt = Number(document.getElementById('normalSendAmount').value) || 0;
+    const err = document.getElementById('normalSendError');
+    if(amt <= 0){ err.textContent = 'Enter an amount greater than zero'; err.classList.add('show'); }
+    else if(amt > currentUser.balance){ err.textContent = `Exceeds your main account balance of ${fmt(currentUser.balance)}`; err.classList.add('show'); }
+    else { err.classList.remove('show'); }
+  }
+  async function executeNormalSend(){
+    const amt = Number(document.getElementById('normalSendAmount').value) || 0;
+    if(amt <= 0 || amt > currentUser.balance){ updateNormalSendError(); return; }
+    const recipient = otherUsersCache.find(u=>u.id===sendRecipientId);
+    if(!recipient){ toast('Recipient not found'); return; }
+    const newSenderBalance = currentUser.balance - amt;
+    const newRecipientBalance = recipient.balance + amt;
+    const { error: err1 } = await supabaseClient.from('users').update({ balance: newSenderBalance }).eq('id', currentUser.id);
+    const { error: err2 } = await supabaseClient.from('users').update({ balance: newRecipientBalance }).eq('id', recipient.id);
+    if(err1 || err2){ toast('Could not complete transfer — try again'); return; }
+    await supabaseClient.from('transactions').insert([
+      { user_id: currentUser.id, type:'debit', description:`[BANK] Sent to ${recipient.name}`, amount: amt },
+      { user_id: recipient.id, type:'credit', description:`[BANK] Received from ${currentUser.name}`, amount: amt }
+    ]);
+    currentUser.balance = newSenderBalance;
+    document.getElementById('normalSendFormArea').style.display = 'none';
+    document.getElementById('normalSendSuccessMsg').textContent = `${fmt(amt)} sent to ${recipient.name} from your main account`;
+    document.getElementById('normalSendSuccess').classList.remove('show');
+    void document.getElementById('normalSendSuccess').offsetWidth;
+    document.getElementById('normalSendSuccess').classList.add('show');
+    refreshHomeBalance();
+    setTimeout(()=>{ goHome(); }, 1700);
   }
 
   /* ================= History ================= */
@@ -1289,37 +1422,36 @@
     ).join('');
   }
   function setHistFilter(key){ currentHistFilter = key; renderHistory(); }
-  function renderHistory(){
+  async function renderHistory(){
     renderHistFilters();
-    const u = getCurrentUser();
+    const list = document.getElementById('histList');
+    const { data, error } = await supabaseClient.from('transactions').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:false});
+    if(error){ list.innerHTML = '<p class="txn-empty">Could not load history.</p>'; return; }
     const rangeMs = FILTER_RANGES[currentHistFilter];
     const now = Date.now();
-    const filtered = u.transactions.filter(t=> rangeMs===Infinity || (now - t.ts) <= rangeMs);
+    const filtered = data.filter(t=> rangeMs===Infinity || (now - new Date(t.created_at).getTime()) <= rangeMs);
     document.getElementById('histCount').textContent = filtered.length;
-    const circulated = filtered.reduce((s,t)=> s + Math.abs(t.amount), 0);
+    const circulated = filtered.reduce((s,t)=> s + Math.abs(Number(t.amount)), 0);
     document.getElementById('histCirculated').textContent = fmt(circulated);
-    document.getElementById('histBalance').textContent = fmt(u.balance);
-    const list = document.getElementById('histList');
-    list.innerHTML = filtered.length ? filtered.map(txnRowHtml).join('') : '<p class="txn-empty">No transactions in this period.</p>';
+    document.getElementById('histBalance').textContent = fmt(currentUser.balance);
+    list.innerHTML = filtered.length ? filtered.map(rowToTxnHtml).join('') : '<p class="txn-empty">No transactions in this period.</p>';
   }
 
-  /* ================= Nav init ================= */
-  document.addEventListener('DOMContentLoaded', ()=>{});
-
-  seedIfNeeded();
-  populateQuestionSelects();
-  if(state.isAdminSession){
-    renderAdminPanel();
-    showScreen('admin-panel');
-  } else if(state.currentUserId && getCurrentUser()){
-    const u = getCurrentUser();
-    document.getElementById('greetName').textContent = u.name.split(' ')[0] || u.name;
-    document.getElementById('avatarInitial').textContent = (u.name[0]||'?').toUpperCase();
-    refreshHomeBalance();
-    goHome();
-  } else {
-    showScreen('auth');
+  /* ================= Init ================= */
+  async function init(){
+    populateQuestionSelects();
+    loadActivityLog();
+    const restored = await restoreSession();
+    if(restored){
+      document.getElementById('greetName').textContent = currentUser.name.split(' ')[0] || currentUser.name;
+      document.getElementById('avatarInitial').textContent = (currentUser.name[0]||'?').toUpperCase();
+      refreshHomeBalance();
+      goHome();
+    } else {
+      showScreen('auth');
+    }
   }
+  init();
 </script>
 
 </body>
