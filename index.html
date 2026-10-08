@@ -13,12 +13,18 @@
     --brass-500:#B68A3D; --brass-400:#CBA35C; --brass-tint:#FBF6EC;
     --vega-700:#3B2768; --vega-600:#4B2E83; --vega-500:#5B3AA8; --vega-400:#8A6FD6; --vega-tint:#F1EDFB;
     --success:#2F8F5C; --debit:#B23A3A;
+    --l-navy:#0B1A2B; --l-text-muted:rgba(244,241,233,0.62); --l-line:rgba(203,163,92,0.22);
   }
   *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
   body{margin:0; background:var(--paper); color:var(--ink-900); font-family:'IBM Plex Sans', sans-serif; -webkit-font-smoothing:antialiased;}
   button{font-family:inherit;}
-  .serif{font-family:'Fraunces', serif;}
+  a{color:inherit;}
 
+  /* ---- Global switch for animations (user preference) ---- */
+  body.anim-off *, body.anim-off *::before, body.anim-off *::after{animation:none !important; transition:none !important; scroll-behavior:auto !important;}
+
+  /* ================= Full-page screens ================= */
   .view-full{display:none; min-height:100vh;}
   .view-full.active{display:flex; align-items:center; justify-content:center; padding:40px 20px;}
   .auth-shell{background:linear-gradient(160deg, #0B1A2B, #16233A);}
@@ -40,14 +46,66 @@
   .auth-error{font-size:12.5px; color:#B23A3A; margin:-4px 0 14px; display:none;}
   .auth-error.show{display:block;}
   .auth-hint{font-size:12px; color:#7C8494; margin:0 0 16px;}
-  .auth-submit{width:100%; padding:13px; background:#16202B; color:#F4F1E9; border:none; border-radius:4px; font-size:14.5px; font-weight:500; cursor:pointer;}
+  .auth-submit{width:100%; padding:13px; background:#16202B; color:#F4F1E9; border:none; border-radius:4px; font-size:14.5px; font-weight:500; cursor:pointer; transition:background .2s ease, transform .1s ease;}
   .auth-submit:hover{background:#000;}
+  .auth-submit:active{transform:scale(0.98);}
   .auth-admin-link{display:block; width:100%; text-align:center; background:none; border:none; color:#5B6472; font-size:12.5px; text-decoration:underline; cursor:pointer; margin-top:6px;}
   .auth-forgot{display:block; text-align:right; background:none; border:none; color:#5B6472; font-size:12.5px; text-decoration:underline; cursor:pointer; margin:-6px 0 16px; margin-left:auto;}
   .auth-stage{display:none;}
   .auth-stage.active-stage{display:block;}
   .qtext{font-size:13px; color:#16202B; background:#EAE5D6; padding:9px 12px; border-radius:6px; margin-bottom:8px;}
 
+  /* ================= Landing page chrome (login screen) ================= */
+  .view-full.auth-landing.active{display:block; padding:0; min-height:100vh;}
+  .auth-landing{color:#F4F1E9; background:var(--l-navy);}
+  .land-header{display:flex; align-items:center; justify-content:space-between; padding:26px 6vw; border-bottom:1px solid var(--l-line);}
+  .land-brand{display:flex; align-items:center; gap:12px;}
+  .land-brand svg{width:28px; height:28px;}
+  .land-brand span{font-family:'Fraunces', serif; font-size:19px; letter-spacing:0.02em; font-weight:500;}
+  .land-nav{display:flex; gap:30px; font-size:14.5px;}
+  .land-nav a{text-decoration:none; color:var(--l-text-muted); transition:color .2s ease;}
+  .land-nav a:hover{color:#F4F1E9;}
+
+  .land-hero{position:relative; display:grid; grid-template-columns:1.1fr 0.9fr; gap:48px; padding:9vh 6vw 10vh; overflow:hidden;}
+  .land-hero-art{position:absolute; right:-6%; top:-8%; width:64%; height:auto; opacity:0.45; z-index:0; pointer-events:none;}
+  .hero-copy{position:relative; z-index:2; align-self:center;}
+  .hero-eyebrow{font-family:'Fraunces', serif; font-style:italic; font-size:14px; color:var(--brass-400); margin:0 0 22px;}
+  .hero-copy h1{font-family:'Fraunces', serif; font-weight:500; font-size:clamp(38px, 5vw, 64px); line-height:1.05; margin:0 0 24px; max-width:12ch;}
+  .hero-copy p.lede{font-size:17px; line-height:1.65; color:var(--l-text-muted); max-width:46ch; margin:0 0 34px;}
+  .hero-stats{display:flex; gap:40px; margin-top:40px; padding-top:30px; border-top:1px solid var(--l-line); max-width:50ch; flex-wrap:wrap;}
+  .hero-stats b{display:block; font-family:'Fraunces', serif; font-size:24px; font-weight:500;}
+  .hero-stats span{font-size:13px; color:var(--l-text-muted);}
+  .panel-wrap{position:relative; z-index:2; align-self:center; justify-self:end;}
+
+  .draw{stroke-dasharray:1200; stroke-dashoffset:1200; animation:draw 2.4s cubic-bezier(.65,0,.35,1) forwards;}
+  .draw2{animation-delay:.35s;} .draw3{animation-delay:.7s;}
+  @keyframes draw{ to{stroke-dashoffset:0;} }
+  .hero-copy{animation:riseIn .7s ease both;}
+  .panel-wrap{animation:riseIn .7s ease .15s both;}
+  @keyframes riseIn{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+
+  .land-trust{display:grid; grid-template-columns:repeat(3, 1fr); gap:1px; background:var(--l-line); border-top:1px solid var(--l-line); border-bottom:1px solid var(--l-line);}
+  .land-trust-item{background:var(--l-navy); padding:44px 6vw;}
+  .land-trust-item .num{font-family:'Fraunces', serif; font-size:15px; color:var(--brass-400); margin-bottom:14px;}
+  .land-trust-item h3{font-family:'Fraunces', serif; font-weight:500; font-size:19px; margin:0 0 10px;}
+  .land-trust-item p{font-size:14px; line-height:1.6; color:var(--l-text-muted); margin:0; max-width:34ch;}
+
+  .land-contact{display:grid; grid-template-columns:0.9fr 1.1fr; gap:48px; padding:9vh 6vw; border-bottom:1px solid var(--l-line);}
+  .land-contact h2{font-family:'Fraunces', serif; font-weight:500; font-size:clamp(28px, 3.2vw, 38px); margin:0 0 16px; max-width:12ch;}
+  .land-contact > div:first-child p{font-size:15px; line-height:1.65; color:var(--l-text-muted); max-width:40ch; margin:0;}
+  .contact-grid{display:grid; grid-template-columns:repeat(2, 1fr); gap:1px; background:var(--l-line); border:1px solid var(--l-line);}
+  .contact-card{background:var(--l-navy); padding:26px 24px;}
+  .contact-card.wide{grid-column:1 / -1;}
+  .contact-card .label{font-size:12px; color:var(--brass-400); font-family:'Fraunces', serif; font-style:italic; margin-bottom:10px;}
+  .contact-card .value{font-size:15.5px; line-height:1.55; color:#F4F1E9;}
+  .contact-card .value a{text-decoration:none; border-bottom:1px solid var(--l-line);}
+  .contact-card .value a:hover{border-bottom-color:var(--brass-400);}
+
+  .land-footer{padding:40px 6vw; display:flex; justify-content:space-between; align-items:center; font-size:12.5px; color:var(--l-text-muted); gap:16px; flex-wrap:wrap;}
+  .land-footer .land-brand span{font-size:15px;}
+  .land-footer .land-brand svg{width:20px; height:20px;}
+
+  /* ================= Admin ================= */
   .admin-shell{background:var(--paper); align-items:flex-start !important; padding:40px 6vw !important;}
   .admin-wrap{width:100%; max-width:1020px; margin:0 auto;}
   .admin-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;}
@@ -66,9 +124,10 @@
   .log-row:first-child{border-top:none;}
   .log-time{color:var(--ink-400); flex-shrink:0; min-width:150px;}
   .field-row{margin-bottom:14px;}
-  .field-row label{display:block; font-size:12px; color:var(--ink-400); margin-bottom:6px;}
-  .field-row input{width:100%; padding:10px 12px; border:1px solid var(--hairline); border-radius:8px; font-size:14px;}
+  .field-row label{display:block; font-size:12.5px; color:var(--ink-400); margin-bottom:7px;}
+  .field-row input, .field-row select{width:100%; padding:11px 13px; border:1px solid var(--hairline); border-radius:8px; font-size:14.5px;}
 
+  /* ================= App shell ================= */
   .app{display:none; min-height:100vh;}
   .app.shown{display:flex;}
   .sidebar{width:236px; flex-shrink:0; background:var(--card); border-right:1px solid var(--hairline); padding:26px 18px; display:flex; flex-direction:column;}
@@ -86,19 +145,25 @@
   .view.active{display:block; animation:fadeIn .35s ease both;}
   @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
 
-  .topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:32px;}
+  .topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; position:relative;}
   .greeting h1{font-family:'Fraunces', serif; font-weight:500; font-size:26px; margin:0 0 4px;}
   .greeting p{margin:0; font-size:13.5px; color:var(--ink-400);}
   .topbar-right{display:flex; align-items:center; gap:12px;}
   .avatar{width:40px; height:40px; border-radius:50%; background:var(--ink-900); color:var(--paper); display:flex; align-items:center; justify-content:center; font-family:'Fraunces', serif; font-size:15px; flex-shrink:0;}
-  .logout-btn{width:38px; height:38px; border-radius:8px; border:1px solid var(--hairline); background:var(--card); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-600);}
-  .logout-btn:hover{background:var(--paper);}
-  .logout-btn svg{width:16px; height:16px;}
+  .icon-btn{width:38px; height:38px; border-radius:8px; border:1px solid var(--hairline); background:var(--card); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-600); transition:background .15s ease, transform .1s ease;}
+  .icon-btn:hover{background:var(--paper);}
+  .icon-btn:active{transform:scale(0.94);}
+  .icon-btn svg{width:16px; height:16px;}
+
+  .settings-pop{display:none; position:absolute; right:0; top:52px; z-index:20; background:var(--card); border:1px solid var(--hairline); border-radius:12px; padding:16px 18px; width:250px; box-shadow:0 18px 40px -16px rgba(0,0,0,0.25);}
+  .settings-pop.open{display:block; animation:fadeIn .2s ease both;}
+  .settings-pop h4{font-family:'Fraunces', serif; font-weight:500; font-size:14px; margin:0 0 12px; color:var(--ink-600);}
+  .set-row{display:flex; align-items:center; justify-content:space-between; padding:9px 0; font-size:13.5px;}
+  .set-row small{display:block; color:var(--ink-400); font-size:11.5px; margin-top:2px;}
 
   .balance-card{position:relative; background:var(--card); border:1px solid var(--hairline); border-radius:14px; padding:28px 30px; margin-bottom:28px; overflow:hidden;}
   .balance-glow{position:absolute; top:-40%; right:-10%; width:320px; height:320px; border-radius:50%; background:radial-gradient(circle, rgba(182,138,61,0.16), transparent 70%); animation:breathe 8s ease-in-out infinite alternate; pointer-events:none;}
   @keyframes breathe{ from{transform:scale(0.9); opacity:.7;} to{transform:scale(1.15); opacity:1;} }
-  @media (prefers-reduced-motion: reduce){ .balance-glow{animation:none;} }
   .balance-top{display:flex; align-items:center; justify-content:space-between; position:relative; z-index:1;}
   .balance-label{font-size:13px; color:var(--ink-400);}
   .balance-row{display:flex; align-items:baseline; gap:14px; margin-top:10px; position:relative; z-index:1;}
@@ -112,19 +177,23 @@
   .zone h3{font-family:'Fraunces', serif; font-weight:500; font-size:15px; margin:0 0 16px; color:var(--ink-600);}
   .zone-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; padding-bottom:14px;}
   .zone-grid-4{display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; padding-bottom:14px;}
-  .zone-btn{display:flex; flex-direction:column; align-items:center; gap:9px; background:none; border:none; cursor:pointer; padding:10px 4px; border-radius:8px; color:var(--ink-900);}
-  .zone-btn:hover{background:var(--paper);}
+  .zone-btn{display:flex; flex-direction:column; align-items:center; gap:9px; background:none; border:none; cursor:pointer; padding:10px 4px; border-radius:8px; color:var(--ink-900); transition:background .15s ease, transform .15s ease; animation:popIn .45s ease both;}
+  .zone-btn:nth-child(2){animation-delay:.05s;} .zone-btn:nth-child(3){animation-delay:.1s;} .zone-btn:nth-child(4){animation-delay:.15s;}
+  @keyframes popIn{ from{opacity:0; transform:translateY(8px) scale(0.96);} to{opacity:1; transform:translateY(0) scale(1);} }
+  .zone-btn:hover{background:var(--paper); transform:translateY(-2px);}
+  .zone-btn:active{transform:scale(0.96);}
   .zone-icon{width:42px; height:42px; border-radius:50%; background:var(--brass-tint); display:flex; align-items:center; justify-content:center;}
   .zone-icon svg{width:19px; height:19px; stroke:var(--brass-500);}
-  .zone-btn span{font-size:12px; text-align:center; line-height:1.3; color:var(--ink-600);}
   .zone-icon.bank-icon{background:var(--vega-tint);}
   .zone-icon.bank-icon svg{stroke:var(--vega-500);}
+  .zone-btn span{font-size:12px; text-align:center; line-height:1.3; color:var(--ink-600);}
 
-  .chan-badge{display:inline-block; font-size:9px; font-weight:500; padding:2px 7px; border-radius:8px; margin-left:6px; vertical-align:middle; font-family:'IBM Plex Sans', sans-serif; letter-spacing:0.02em;}
+  .chan-badge{display:inline-block; font-size:9px; font-weight:500; padding:2px 7px; border-radius:8px; margin-left:6px; vertical-align:middle; letter-spacing:0.02em;}
   .chan-vega{background:var(--vega-tint); color:var(--vega-700);}
   .chan-bank{background:var(--brass-tint); color:var(--brass-500);}
 
-  .vega-promo{position:relative; background:linear-gradient(135deg, var(--vega-600), var(--vega-500) 55%, var(--vega-400)); border-radius:14px; padding:28px 30px; margin-bottom:28px; color:#fff; overflow:hidden; cursor:pointer; border:none; text-align:left; width:100%; display:block;}
+  .vega-promo{position:relative; background:linear-gradient(135deg, var(--vega-600), var(--vega-500) 55%, var(--vega-400)); border-radius:14px; padding:28px 30px; margin-bottom:28px; color:#fff; overflow:hidden; cursor:pointer; border:none; text-align:left; width:100%; display:block; transition:transform .2s ease;}
+  .vega-promo:hover{transform:translateY(-2px);}
   .vega-promo::after{content:''; position:absolute; right:-60px; bottom:-80px; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.14), transparent 70%);}
   .vega-eyebrow{font-family:'Fraunces', serif; font-style:italic; font-size:13px; opacity:0.85; margin-bottom:8px;}
   .vega-title{font-family:'Fraunces', serif; font-size:24px; font-weight:500; margin-bottom:8px;}
@@ -138,24 +207,23 @@
   .txn-row{display:flex; align-items:center; gap:14px; padding:12px 0; border-top:1px solid var(--hairline);}
   .txn-row:first-of-type{border-top:none;}
   .txn-dot{width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
-  .txn-dot.credit{background:#EAF5EE;}
-  .txn-dot.debit{background:#FAECEC;}
+  .txn-dot.credit{background:#EAF5EE;} .txn-dot.debit{background:#FAECEC;}
   .txn-dot svg{width:15px; height:15px;}
-  .txn-dot.credit svg{stroke:var(--success);}
-  .txn-dot.debit svg{stroke:var(--debit);}
+  .txn-dot.credit svg{stroke:var(--success);} .txn-dot.debit svg{stroke:var(--debit);}
   .txn-info{flex:1; min-width:0;}
   .txn-info .name{font-size:14px;}
   .txn-info .date{font-size:12px; color:var(--ink-400);}
   .txn-amt{font-family:'Fraunces', serif; font-size:15px;}
-  .txn-amt.credit{color:var(--success);}
-  .txn-amt.debit{color:var(--debit);}
+  .txn-amt.credit{color:var(--success);} .txn-amt.debit{color:var(--debit);}
   .txn-empty{font-size:13px; color:var(--ink-400); padding:10px 0;}
 
   .view-head{display:flex; align-items:center; gap:14px; margin-bottom:26px;}
+  .view-head .grow{flex:1;}
   .back-btn{width:36px; height:36px; border-radius:8px; border:1px solid var(--hairline); background:var(--card); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;}
   .back-btn:hover{background:var(--paper);}
   .back-btn svg{width:16px; height:16px;}
   .view-head h2{font-family:'Fraunces', serif; font-weight:500; font-size:22px; margin:0;}
+  .help-btn{height:36px; padding:0 14px; border-radius:18px; border:1px solid var(--vega-400); background:var(--vega-tint); color:var(--vega-700); font-size:12.5px; cursor:pointer;}
 
   .vega-wallet-card{background:linear-gradient(135deg, var(--vega-700), var(--vega-500)); border-radius:14px; padding:26px 28px; color:#fff; margin-bottom:20px;}
   .vega-wallet-top{display:flex; justify-content:space-between; align-items:flex-start;}
@@ -166,7 +234,7 @@
   .view-wallet-btn{margin-top:18px; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.35); color:#fff; padding:9px 16px; border-radius:8px; font-size:13px; cursor:pointer;}
 
   .notes-panel{display:none; background:var(--card); border:1px solid var(--hairline); border-radius:12px; padding:20px; margin-bottom:20px;}
-  .notes-panel.open{display:block;}
+  .notes-panel.open{display:block; animation:fadeIn .25s ease both;}
   .notes-panel h4{font-family:'Fraunces', serif; font-weight:500; font-size:14px; margin:0 0 14px; color:var(--ink-600);}
   .notes-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(84px, 1fr)); gap:10px;}
   .note-chip{position:relative; border-radius:8px; padding:12px 8px 10px; color:#fff; text-align:center; font-family:'Fraunces', serif;}
@@ -174,8 +242,9 @@
   .note-chip .badge{position:absolute; top:6px; right:6px; background:rgba(255,255,255,0.28); border-radius:10px; font-size:10px; padding:1px 6px; font-family:'IBM Plex Sans', sans-serif;}
 
   .vega-actions{display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:20px;}
-  .vega-act-btn{display:flex; flex-direction:column; align-items:center; gap:9px; background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:16px 6px; cursor:pointer; color:var(--ink-900);}
-  .vega-act-btn:hover{border-color:var(--vega-400);}
+  .vega-act-btn{display:flex; flex-direction:column; align-items:center; gap:9px; background:var(--card); border:1px solid var(--hairline); border-radius:10px; padding:16px 6px; cursor:pointer; color:var(--ink-900); transition:transform .15s ease, border-color .15s ease;}
+  .vega-act-btn:hover{border-color:var(--vega-400); transform:translateY(-2px);}
+  .vega-act-btn:active{transform:scale(0.96);}
   .vega-act-btn .zone-icon{background:var(--vega-tint);}
   .vega-act-btn .zone-icon svg{stroke:var(--vega-500);}
   .vega-act-btn span{font-size:12px; color:var(--ink-600);}
@@ -194,9 +263,8 @@
   .id-mini-btn{padding:8px 12px; border-radius:6px; border:1px solid var(--hairline); background:var(--card); font-size:12.5px; cursor:pointer;}
   .id-mini-btn.primary{background:var(--vega-600); color:#fff; border-color:var(--vega-600);}
   .id-avail-msg{font-size:12px; margin-top:6px;}
-  .id-avail-msg.ok{color:var(--success);}
-  .id-avail-msg.bad{color:var(--debit);}
-  .toggle-switch{position:relative; width:42px; height:24px; border-radius:12px; background:var(--hairline); border:none; cursor:pointer; flex-shrink:0;}
+  .id-avail-msg.ok{color:var(--success);} .id-avail-msg.bad{color:var(--debit);}
+  .toggle-switch{position:relative; width:42px; height:24px; border-radius:12px; background:var(--hairline); border:none; cursor:pointer; flex-shrink:0; transition:background .2s ease;}
   .toggle-switch.on{background:var(--success);}
   .toggle-switch::after{content:''; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:transform .15s ease;}
   .toggle-switch.on::after{transform:translateX(18px);}
@@ -206,7 +274,7 @@
   .recipient-tab.active{background:var(--vega-600); border-color:var(--vega-600); color:#fff;}
   .recipient-pane{display:none;}
   .recipient-pane.active{display:block;}
-  .user-pick-row{display:flex; align-items:center; gap:12px; padding:12px 10px; border-radius:8px; cursor:pointer; border:1px solid transparent;}
+  .user-pick-row{display:flex; align-items:center; gap:12px; padding:12px 10px; border-radius:8px; cursor:pointer; border:1px solid transparent; transition:background .15s ease;}
   .user-pick-row:hover{background:var(--card); border-color:var(--hairline);}
   .user-pick-avatar{width:34px; height:34px; border-radius:50%; background:var(--vega-tint); color:var(--vega-700); display:flex; align-items:center; justify-content:center; font-family:'Fraunces', serif; font-size:13px; flex-shrink:0;}
   .user-pick-row .uname{font-size:12px; color:var(--ink-400);}
@@ -229,28 +297,27 @@
   .remaining-bar .val{font-family:'Fraunces', serif; font-size:19px; color:var(--vega-700);}
 
   .send-note{border-radius:10px; padding:14px 10px; color:#fff; text-align:center; cursor:pointer; border:2px solid transparent; transition:opacity .15s ease, transform .1s ease; font-family:'Fraunces', serif;}
+  .send-note:active.usable{transform:scale(0.95);}
   .send-note .amt{font-size:17px; font-weight:500;}
   .send-note .avail{font-size:10.5px; font-family:'IBM Plex Sans', sans-serif; opacity:0.85; margin-top:4px;}
   .send-note.disabled{opacity:0.32; cursor:not-allowed;}
   .send-note.usable{border-color:rgba(255,255,255,0.75);}
 
   .break-suggest{background:#FBF1E9; border:1px solid var(--brass-400); border-radius:10px; padding:14px 16px; margin-bottom:18px; display:none;}
-  .break-suggest.show{display:block;}
+  .break-suggest.show{display:block; animation:fadeIn .25s ease both;}
   .break-suggest p{margin:0 0 10px; font-size:13.5px; color:var(--ink-900);}
   .break-suggest button{background:var(--brass-500); color:#fff; border:none; border-radius:8px; padding:9px 14px; font-size:13px; cursor:pointer;}
 
   .pin-panel{display:none; background:var(--vega-tint); border:1px solid var(--vega-400); border-radius:10px; padding:18px; margin-top:16px;}
-  .pin-panel.show{display:block;}
+  .pin-panel.show{display:block; animation:fadeIn .25s ease both;}
   .pin-panel p{margin:0 0 12px; font-size:13px; color:var(--vega-700);}
   .pin-panel input{width:140px; padding:10px 12px; border:1px solid var(--vega-400); border-radius:8px; font-size:16px; letter-spacing:4px; text-align:center;}
 
-  .primary-btn{width:100%; padding:14px; background:var(--vega-600); color:#fff; border:none; border-radius:10px; font-size:14.5px; font-weight:500; cursor:pointer; margin-top:8px;}
+  .primary-btn{width:100%; padding:14px; background:var(--vega-600); color:#fff; border:none; border-radius:10px; font-size:14.5px; font-weight:500; cursor:pointer; margin-top:8px; transition:background .2s ease, transform .1s ease;}
   .primary-btn:disabled{background:var(--ink-400); cursor:not-allowed;}
   .primary-btn:hover:not(:disabled){background:var(--vega-700);}
+  .primary-btn:active:not(:disabled){transform:scale(0.985);}
   .ghost-btn{width:100%; padding:12px; background:none; color:var(--ink-600); border:1px solid var(--hairline); border-radius:10px; font-size:13.5px; cursor:pointer; margin-top:10px;}
-
-  .field-row input, .field-row select{width:100%; padding:11px 13px; border:1px solid var(--hairline); border-radius:8px; font-size:14.5px;}
-  .field-row label{display:block; font-size:12.5px; color:var(--ink-400); margin-bottom:7px;}
 
   .stepper-row{display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-top:1px solid var(--hairline);}
   .stepper-row:first-of-type{border-top:none;}
@@ -266,7 +333,26 @@
   .load-error{font-size:12.5px; color:var(--debit); margin:-8px 0 14px; display:none;}
   .load-error.show{display:block;}
 
-  /* ---- Celebration animation ---- */
+  /* ---- Everyday picker ---- */
+  .pick-list{display:flex; flex-direction:column; gap:10px; max-width:560px;}
+  .pick-row{display:flex; align-items:center; justify-content:space-between; gap:14px; padding:16px 18px; background:var(--card); border:1px solid var(--hairline); border-radius:12px; cursor:pointer; font-size:14.5px; text-align:left; width:100%; transition:border-color .15s ease, transform .15s ease; animation:popIn .35s ease both;}
+  .pick-row:hover{border-color:var(--brass-400); transform:translateX(3px);}
+  .pick-row .pick-sub{font-size:12px; color:var(--ink-400); margin-top:3px;}
+  .pick-row svg{width:16px; height:16px; stroke:var(--ink-400); flex-shrink:0;}
+  .pick-note{font-size:12.5px; color:var(--ink-400); margin:18px 0 0; max-width:560px;}
+
+  /* ---- Manual ---- */
+  .manual-hero{background:var(--card); border:1px solid var(--hairline); border-radius:14px; padding:20px; margin-bottom:22px; max-width:760px;}
+  .manual-hero svg{width:100%; height:auto; display:block;}
+  .manual-steps{display:grid; grid-template-columns:repeat(2, 1fr); gap:14px; max-width:760px;}
+  .manual-step{background:var(--card); border:1px solid var(--hairline); border-radius:12px; padding:18px; display:flex; gap:14px; animation:popIn .4s ease both;}
+  .manual-step:nth-child(2){animation-delay:.06s;} .manual-step:nth-child(3){animation-delay:.12s;} .manual-step:nth-child(4){animation-delay:.18s;}
+  .step-num{width:30px; height:30px; border-radius:50%; background:var(--vega-600); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Fraunces', serif; font-size:14px; flex-shrink:0;}
+  .manual-step h4{font-family:'Fraunces', serif; font-weight:500; font-size:15px; margin:0 0 5px;}
+  .manual-step p{margin:0; font-size:13px; line-height:1.55; color:var(--ink-600);}
+  .manual-tip{max-width:760px; margin-top:16px; background:var(--brass-tint); border:1px solid var(--brass-400); border-radius:12px; padding:14px 18px; font-size:13px; color:var(--ink-600);}
+
+  /* ---- Celebration ---- */
   .success-state{display:none; text-align:center; padding:26px 10px;}
   .success-state.show{display:block;}
   .celebrate{position:relative; width:140px; height:140px; margin:0 auto 18px;}
@@ -280,14 +366,14 @@
   @keyframes drawcheck{to{stroke-dashoffset:0;}}
   .confetti-dot{position:absolute; top:50%; left:50%; width:7px; height:7px; border-radius:50%; opacity:0; animation:burst .8s ease-out .35s forwards;}
   @keyframes burst{0%{transform:translate(-50%,-50%) scale(0); opacity:1;} 100%{transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1); opacity:0;}}
-  @media (prefers-reduced-motion: reduce){ .celebrate .ring, .celebrate .core, .confetti-dot{animation:none; opacity:1;} }
+  body.anim-off .celebrate .ring, body.anim-off .celebrate .confetti-dot{opacity:0;}
+  body.anim-off .celebrate .core path{stroke-dashoffset:0 !important;}
   .success-state h3{font-family:'Fraunces', serif; font-weight:500; margin:0 0 6px; font-size:19px;}
   .success-state p{color:var(--ink-400); font-size:13.5px; margin:0;}
 
   .toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink-900); color:#fff; padding:12px 20px; border-radius:10px; font-size:13.5px; opacity:0; pointer-events:none; transition:opacity .25s ease, transform .25s ease; z-index:50;}
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
 
-  /* ---- History ---- */
   .hist-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:22px;}
   .hist-stat{background:var(--card); border:1px solid var(--hairline); border-radius:12px; padding:18px 20px;}
   .hist-stat .lbl{font-size:12px; color:var(--ink-400); margin-bottom:6px;}
@@ -310,46 +396,113 @@
     .admin-grid{grid-template-columns:1fr;}
     .hist-stats{grid-template-columns:1fr;}
     .auth-row2{grid-template-columns:1fr;}
+    .land-nav{display:none;}
+    .land-hero{grid-template-columns:1fr;}
+    .panel-wrap{justify-self:start;}
+    .land-trust{grid-template-columns:1fr;}
+    .land-contact{grid-template-columns:1fr;}
+    .contact-grid{grid-template-columns:1fr;}
+    .manual-steps{grid-template-columns:1fr;}
+    .land-footer{flex-direction:column; align-items:flex-start;}
   }
 </style>
 </head>
 <body>
 
-<!-- ================= AUTH ================= -->
-<div class="view-full auth-shell active" id="view-auth">
-  <div class="auth-card">
-    <div class="auth-logo"><svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 6L16 27L27 6" stroke="#B68A3D" stroke-width="2" stroke-linecap="square"/></svg><span>V BANKING SERVICES</span></div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')" type="button">Log in</button>
-      <button class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')" type="button">Create account</button>
+<!-- ================= LANDING / LOGIN ================= -->
+<div class="view-full auth-shell auth-landing active" id="view-auth">
+  <header class="land-header">
+    <div class="land-brand">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 6L16 27L27 6" stroke="#CBA35C" stroke-width="2" stroke-linecap="square"/></svg>
+      <span>V BANKING SERVICES</span>
+    </div>
+    <nav class="land-nav">
+      <a href="#features">Why V Banking</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="land-hero">
+    <svg class="land-hero-art" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle class="draw" cx="250" cy="250" r="190" stroke="#CBA35C" stroke-width="1"/>
+      <circle class="draw draw2" cx="250" cy="250" r="130" stroke="#B68A3D" stroke-width="1"/>
+      <line class="draw draw3" x1="250" y1="30" x2="250" y2="470" stroke="#CBA35C" stroke-width="1"/>
+      <line class="draw draw3" x1="30" y1="250" x2="470" y2="250" stroke="#CBA35C" stroke-width="1"/>
+    </svg>
+
+    <div class="hero-copy">
+      <p class="hero-eyebrow">Est. for those who expect more</p>
+      <h1>We provide beyond your expectations.</h1>
+      <p class="lede">V Banking Services pairs private-bank discretion with a wallet that thinks in notes, not numbers. Pay a friend, load your wallet, or settle a bill, all from one calm dashboard.</p>
+      <div class="hero-stats">
+        <div><b>₹500</b><span>Welcome cashback</span></div>
+        <div><b>2 ways</b><span>To pay: VegaPay or Bank</span></div>
+        <div><b>Note by note</b><span>A wallet like real cash</span></div>
+      </div>
     </div>
 
-    <form id="loginForm2" class="auth-form active-form" onsubmit="handleLogin(event)">
-      <div class="auth-field"><label for="loginUsername">Username</label><input id="loginUsername" type="text" autocomplete="username" required></div>
-      <div class="auth-field"><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required></div>
-      <button type="button" class="auth-forgot" onclick="goForgotPassword()">Forgot password?</button>
-      <div class="auth-error" id="loginError"></div>
-      <button class="auth-submit" type="submit">Log in</button>
-    </form>
+    <div class="panel-wrap" id="access">
+      <div class="auth-card">
+        <div class="auth-logo"><svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 6L16 27L27 6" stroke="#B68A3D" stroke-width="2" stroke-linecap="square"/></svg><span>V BANKING SERVICES</span></div>
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')" type="button">Log in</button>
+          <button class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')" type="button">Create account</button>
+        </div>
 
-    <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
-      <div class="auth-field"><label for="signupName">Full name</label><input id="signupName" type="text" required></div>
-      <div class="auth-field"><label for="signupUsername">Choose a username</label><input id="signupUsername" type="text" required></div>
-      <div class="auth-row2">
-        <div class="auth-field"><label for="signupPassword">Password</label><input id="signupPassword" type="password" required></div>
-        <div class="auth-field"><label for="signupPassword2">Confirm password</label><input id="signupPassword2" type="password" required></div>
+        <form id="loginForm2" class="auth-form active-form" onsubmit="handleLogin(event)">
+          <div class="auth-field"><label for="loginUsername">Username</label><input id="loginUsername" type="text" autocomplete="username" required></div>
+          <div class="auth-field"><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required></div>
+          <button type="button" class="auth-forgot" onclick="goForgotPassword()">Forgot password?</button>
+          <div class="auth-error" id="loginError"></div>
+          <button class="auth-submit" type="submit">Log in</button>
+        </form>
+
+        <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
+          <div class="auth-field"><label for="signupName">Full name</label><input id="signupName" type="text" required></div>
+          <div class="auth-field"><label for="signupUsername">Choose a username</label><input id="signupUsername" type="text" required></div>
+          <div class="auth-row2">
+            <div class="auth-field"><label for="signupPassword">Password</label><input id="signupPassword" type="password" required></div>
+            <div class="auth-field"><label for="signupPassword2">Confirm password</label><input id="signupPassword2" type="password" required></div>
+          </div>
+          <div class="auth-field"><label for="signupQ1">Security question 1</label><select id="signupQ1"></select></div>
+          <div class="auth-field"><label for="signupA1">Answer</label><input id="signupA1" type="text" required></div>
+          <div class="auth-field"><label for="signupQ2">Security question 2</label><select id="signupQ2"></select></div>
+          <div class="auth-field"><label for="signupA2">Answer</label><input id="signupA2" type="text" required></div>
+          <p class="auth-hint">New accounts start with a ₹500 welcome cashback.</p>
+          <div class="auth-error" id="signupError"></div>
+          <button class="auth-submit" type="submit">Create account</button>
+        </form>
+
+        <button class="auth-admin-link" type="button" onclick="showScreen('admin-login')">Admin access</button>
       </div>
-      <div class="auth-field"><label for="signupQ1">Security question 1</label><select id="signupQ1"></select></div>
-      <div class="auth-field"><label for="signupA1">Answer</label><input id="signupA1" type="text" required></div>
-      <div class="auth-field"><label for="signupQ2">Security question 2</label><select id="signupQ2"></select></div>
-      <div class="auth-field"><label for="signupA2">Answer</label><input id="signupA2" type="text" required></div>
-      <p class="auth-hint">New accounts start with a ₹500 welcome cashback.</p>
-      <div class="auth-error" id="signupError"></div>
-      <button class="auth-submit" type="submit">Create account</button>
-    </form>
+    </div>
+  </section>
 
-    <button class="auth-admin-link" type="button" onclick="showScreen('admin-login')">Admin access</button>
-  </div>
+  <section class="land-trust" id="features">
+    <div class="land-trust-item"><div class="num">01</div><h3>A wallet that counts notes</h3><p>VegaPay keeps every denomination separate, so you can pay exact change or break a larger note when you need to.</p></div>
+    <div class="land-trust-item"><div class="num">02</div><h3>Two ways to pay</h3><p>Choose VegaPay for note-level control, or a plain Bank transfer for everyday simplicity. Each is clearly labelled in your history.</p></div>
+    <div class="land-trust-item"><div class="num">03</div><h3>Confirmed with your PIN</h3><p>Every VegaPay transfer asks for your own Vega PIN, separate from your login password.</p></div>
+  </section>
+
+  <section class="land-contact" id="contact">
+    <div>
+      <h2>Talk to us</h2>
+      <p>Questions about your account, a payment, or getting started? Reach us by phone or email, or visit our office in Kakinada.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-card"><div class="label">Phone</div><div class="value"><a href="tel:+919581700269">+91 95817 00269</a></div></div>
+      <div class="contact-card"><div class="label">Email</div><div class="value"><a href="mailto:vbankingservices.vegapay@gmail.com">vbankingservices.vegapay@gmail.com</a></div></div>
+      <div class="contact-card wide"><div class="label">Current address</div><div class="value">Agasthya Solutions, Ground Floor, Nilayam, 2-34-14, Srinaga, Chinta Vari St, opposite Mamatha Diagnostic Centre, Perrajupeta, Kakinada, Andhra Pradesh 533003</div></div>
+    </div>
+  </section>
+
+  <footer class="land-footer">
+    <div class="land-brand">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 6L16 27L27 6" stroke="#CBA35C" stroke-width="2" stroke-linecap="square"/></svg>
+      <span>V BANKING SERVICES</span>
+    </div>
+    <div>© 2026 V Banking Services. A demonstration project with fictional balances.</div>
+  </footer>
 </div>
 
 <!-- ================= FORGOT PASSWORD ================= -->
@@ -363,7 +516,6 @@
       <div class="auth-error" id="fpError1"></div>
       <button class="auth-submit" type="button" onclick="handleForgotStage1()">Continue</button>
     </div>
-
     <div class="auth-stage" id="fpStage2">
       <div class="qtext" id="fpQ1text"></div>
       <div class="auth-field"><input id="fpA1" type="text" placeholder="Your answer" required></div>
@@ -372,14 +524,12 @@
       <div class="auth-error" id="fpError2"></div>
       <button class="auth-submit" type="button" onclick="handleForgotStage2()">Verify answers</button>
     </div>
-
     <div class="auth-stage" id="fpStage3">
       <div class="auth-field"><label for="fpNewPass">New password</label><input id="fpNewPass" type="password" required></div>
       <div class="auth-field"><label for="fpNewPass2">Confirm new password</label><input id="fpNewPass2" type="password" required></div>
       <div class="auth-error" id="fpError3"></div>
       <button class="auth-submit" type="button" onclick="handleForgotStage3()">Reset password</button>
     </div>
-
     <button class="auth-admin-link" type="button" onclick="showScreen('auth')">Back to login</button>
   </div>
 </div>
@@ -429,10 +579,10 @@
     <div class="side-logo"><svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 6L16 27L27 6" stroke="#CBA35C" stroke-width="2" stroke-linecap="square"/></svg><span>V BANKING</span></div>
     <nav class="side-nav">
       <button class="side-link active" data-nav="home" onclick="goHome()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</button>
-      <button class="side-link" onclick="toast('This section is coming soon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>Recharges &amp; Bills</button>
+      <button class="side-link" data-nav="bills" onclick="openEveryday('bills')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>Recharges &amp; Bills</button>
       <button class="side-link" data-nav="history" onclick="goHistory()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Transactions</button>
       <button class="side-link" onclick="toast('This section is coming soon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Cards</button>
-      <button class="side-link" onclick="toast('This section is coming soon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profile</button>
+      <button class="side-link" data-nav="manual" onclick="openManual()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 3.5M12 17h.01"/></svg>How VegaPay works</button>
     </nav>
   </aside>
 
@@ -441,7 +591,16 @@
     <div class="view active" id="view-home">
       <div class="topbar">
         <div class="greeting"><h1>Welcome back, <span id="greetName">Alex</span></h1><p>Here's where things stand today.</p></div>
-        <div class="topbar-right"><div class="avatar" id="avatarInitial">A</div><button class="logout-btn" onclick="logout()" aria-label="Log out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></button></div>
+        <div class="topbar-right">
+          <button class="icon-btn" onclick="toggleSettings(event)" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></button>
+          <div class="avatar" id="avatarInitial">A</div>
+          <button class="icon-btn" onclick="logout()" aria-label="Log out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></button>
+        </div>
+        <div class="settings-pop" id="settingsPop" onclick="event.stopPropagation()">
+          <h4>Preferences</h4>
+          <div class="set-row"><div>Animations<small>Subtle motion around the app</small></div><button class="toggle-switch on" id="animToggle" onclick="toggleAnimPref()" aria-label="Toggle animations"></button></div>
+          <div class="set-row"><div>Sound effects<small>A chime on successful payments</small></div><button class="toggle-switch on" id="soundToggle" onclick="toggleSoundPref()" aria-label="Toggle sound"></button></div>
+        </div>
       </div>
 
       <div class="balance-card">
@@ -466,9 +625,9 @@
         <div class="zone">
           <h3>Everyday</h3>
           <div class="zone-grid">
-            <button class="zone-btn" onclick="toast('Feature coming soon')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 6h6M9 18h.01"/></svg></span><span>Recharges</span></button>
-            <button class="zone-btn" onclick="toast('Feature coming soon')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 100 4 2 2 0 010 4h18a2 2 0 100-4 2 2 0 000-4H3z"/></svg></span><span>Ticket booking</span></button>
-            <button class="zone-btn" onclick="toast('Feature coming soon')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M9 12h6M9 16h6"/></svg></span><span>Bill pay</span></button>
+            <button class="zone-btn" onclick="openEveryday('recharges')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 6h6M9 18h.01"/></svg></span><span>Recharges</span></button>
+            <button class="zone-btn" onclick="openEveryday('tickets')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 100 4 2 2 0 010 4h18a2 2 0 100-4 2 2 0 000-4H3z"/></svg></span><span>Ticket booking</span></button>
+            <button class="zone-btn" onclick="openEveryday('bills')"><span class="zone-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M9 12h6M9 16h6"/></svg></span><span>Bill pay</span></button>
           </div>
         </div>
       </div>
@@ -486,9 +645,51 @@
       </div>
     </div>
 
+    <!-- EVERYDAY PICKER -->
+    <div class="view" id="view-everyday">
+      <div class="view-head"><button class="back-btn" onclick="everydayBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2 id="everydayTitle">Recharges</h2></div>
+      <p style="font-size:13.5px; color:var(--ink-600); margin:-10px 0 18px;" id="everydayPrompt"></p>
+      <div class="pick-list" id="everydayList"></div>
+      <p class="pick-note">You'll be taken to the provider's official website in a new tab to complete the payment there.</p>
+    </div>
+
+    <!-- MANUAL -->
+    <div class="view" id="view-manual">
+      <div class="view-head"><button class="back-btn" onclick="goHome()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2>How VegaPay works</h2></div>
+      <div class="manual-hero">
+        <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram: notes move from your VegaPay wallet to a friend's wallet">
+          <rect x="20" y="40" width="190" height="120" rx="16" fill="#4B2E83"/>
+          <text x="115" y="30" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="#4B5768">Your wallet</text>
+          <rect x="44" y="64" width="62" height="34" rx="5" fill="#B68A3D"/><text x="75" y="86" text-anchor="middle" font-family="Fraunces, serif" font-size="14" fill="#fff">₹100</text>
+          <rect x="114" y="64" width="62" height="34" rx="5" fill="#3F8F5C"/><text x="145" y="86" text-anchor="middle" font-family="Fraunces, serif" font-size="14" fill="#fff">₹10</text>
+          <rect x="44" y="108" width="62" height="34" rx="5" fill="#2F6FB0"/><text x="75" y="130" text-anchor="middle" font-family="Fraunces, serif" font-size="14" fill="#fff">₹20</text>
+          <rect x="114" y="108" width="62" height="34" rx="5" fill="#C0672E"/><text x="145" y="130" text-anchor="middle" font-family="Fraunces, serif" font-size="14" fill="#fff">₹5</text>
+
+          <path d="M232 100 H478" stroke="#8B93A0" stroke-width="2" stroke-dasharray="6 6" fill="none"/>
+          <polygon points="478,92 494,100 478,108" fill="#8B93A0"/>
+          <rect x="300" y="78" width="62" height="34" rx="5" fill="#B68A3D"/><text x="331" y="100" text-anchor="middle" font-family="Fraunces, serif" font-size="14" fill="#fff">₹100</text>
+          <rect x="372" y="78" width="62" height="34" rx="5" fill="#3F8F5C"/><text x="403" y="100" text-anchor="middle" font-family="Fraunces, serif" font-size="14" fill="#fff">₹10</text>
+          <text x="363" y="150" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" fill="#4B5768">Exact notes travel, nothing rounded</text>
+
+          <rect x="520" y="40" width="180" height="120" rx="16" fill="#1F6F78"/>
+          <text x="610" y="30" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="#4B5768">Friend's wallet</text>
+          <circle cx="610" cy="88" r="20" fill="rgba(255,255,255,0.2)"/>
+          <path d="M600 88l7 7 13-14" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <text x="610" y="136" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" fill="#fff">Received</text>
+        </svg>
+      </div>
+      <div class="manual-steps">
+        <div class="manual-step"><div class="step-num">1</div><div><h4>Load your wallet</h4><p>Open VegaPay, tap Load, and choose how many of each note to add. The amount comes out of your main account balance.</p></div></div>
+        <div class="manual-step"><div class="step-num">2</div><div><h4>Choose who to pay</h4><p>Pick a person by username, from the QR tiles, or by their Vega ID.</p></div></div>
+        <div class="manual-step"><div class="step-num">3</div><div><h4>Pick your notes</h4><p>Manual: tap notes yourself. Automatic: type an amount and VegaPay finds the exact notes. No exact change? It offers to break a larger note, and only if you agree.</p></div></div>
+        <div class="manual-step"><div class="step-num">4</div><div><h4>Confirm with your PIN</h4><p>Create a 4-digit Vega PIN the first time, then enter it for every payment. Done, with a chime and a little celebration.</p></div></div>
+      </div>
+      <div class="manual-tip"><strong>Tip:</strong> Use "Send Money (Bank)" on the Home screen for a plain account-to-account transfer. Your history labels each payment as VegaPay or Bank so you can tell them apart.</div>
+    </div>
+
     <!-- VEGAPAY -->
     <div class="view" id="view-vega">
-      <div class="view-head"><button class="back-btn" onclick="goHome()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2>VegaPay</h2></div>
+      <div class="view-head"><button class="back-btn" onclick="goHome()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2>VegaPay</h2><div class="grow"></div><button class="help-btn" onclick="openManual()">How it works</button></div>
 
       <div class="vega-wallet-card">
         <div class="vega-wallet-top">
@@ -530,9 +731,9 @@
       </div>
     </div>
 
-    <!-- SEND PICK (recipient selection) -->
+    <!-- SEND PICK -->
     <div class="view" id="view-send-pick">
-      <div class="view-head"><button class="back-btn" onclick="goVega()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2>Who are you paying?</h2></div>
+      <div class="view-head"><button class="back-btn" onclick="goHome()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2>Who are you paying?</h2></div>
       <div class="recipient-tabs">
         <button class="recipient-tab" id="rtabUsername" onclick="switchRecipientTab('username')">By username</button>
         <button class="recipient-tab" id="rtabQr" onclick="switchRecipientTab('qr')">By QR</button>
@@ -546,7 +747,7 @@
       </div>
     </div>
 
-    <!-- SEND -->
+    <!-- SEND (VegaPay) -->
     <div class="view" id="view-send">
       <div class="view-head"><button class="back-btn" onclick="goVega()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2>Send money</h2></div>
       <div class="contact-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span id="sendToName">To: —</span></div>
@@ -592,7 +793,7 @@
       </div>
     </div>
 
-    <!-- NORMAL BANK SEND (no VegaPay) -->
+    <!-- NORMAL BANK SEND -->
     <div class="view" id="view-normal-send">
       <div class="view-head"><button class="back-btn" onclick="goHome()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><h2>Send money (Bank)</h2></div>
       <div class="contact-chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span id="normalSendToName">To: —</span></div>
@@ -663,10 +864,10 @@
 <nav class="bottom-tabs" id="bottomTabsShell">
   <div class="side-nav">
     <button class="side-link active" data-nav="home" onclick="goHome()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</button>
-    <button class="side-link" onclick="toast('This section is coming soon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>Bills</button>
+    <button class="side-link" data-nav="bills" onclick="openEveryday('bills')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>Bills</button>
     <button class="side-link" data-nav="history" onclick="goHistory()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Activity</button>
     <button class="side-link" onclick="toast('This section is coming soon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Cards</button>
-    <button class="side-link" onclick="toast('This section is coming soon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profile</button>
+    <button class="side-link" data-nav="manual" onclick="openManual()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 3.5M12 17h.01"/></svg>Help</button>
   </div>
 </nav>
 
@@ -694,25 +895,143 @@
   const FILTER_RANGES = {all:Infinity, '1d':1*86400000, '2d':2*86400000, '3d':3*86400000, '1w':7*86400000, '1m':30*86400000, '1y':365*86400000};
   const FILTER_LABELS = {all:'All', '1d':'1 day', '2d':'2 days', '3d':'3 days', '1w':'1 week', '1m':'1 month', '1y':'1 year'};
 
-  /* ================= App-level state (in memory; data itself lives in Supabase) ================= */
-  let currentUser = null;      // the logged-in user's row, mapped to camelCase
+  /* ================= Everyday services (real provider websites) ================= */
+  const EVERYDAY = {
+    recharges: {
+      title: 'Recharges', prompt: 'What would you like to recharge?',
+      categories: [
+        { key:'mobile', label:'Mobile recharge', sub:'Prepaid and postpaid', prompt:'Select your service provider',
+          providers:[
+            {name:'Airtel', url:'https://www.airtel.in/recharge-online'},
+            {name:'Jio', url:'https://www.jio.com/selfcare/recharge/mobility/'},
+            {name:'Vi (Vodafone Idea)', url:'https://www.myvi.in/prepaid/online-mobile-recharge'},
+            {name:'BSNL', url:'https://www.bsnl.co.in/'}
+          ]},
+        { key:'dth', label:'DTH recharge', sub:'Set-top box and TV', prompt:'Select your DTH provider',
+          providers:[
+            {name:'Tata Play', url:'https://www.tataplay.com/recharge'},
+            {name:'Airtel Digital TV', url:'https://www.airtel.in/dth'},
+            {name:'Dish TV', url:'https://www.dishtv.in/'},
+            {name:'Sun Direct', url:'https://www.sundirect.in/'}
+          ]}
+      ]
+    },
+    tickets: {
+      title: 'Ticket booking', prompt: 'What would you like to book?',
+      categories: [
+        { key:'train', label:'Train', sub:'IRCTC', prompt:'Book on the official railway site',
+          providers:[ {name:'IRCTC', url:'https://www.irctc.co.in/nget/train-search'} ]},
+        { key:'bus', label:'Bus', sub:'Compare bus operators', prompt:'Select a bus booking provider',
+          providers:[
+            {name:'redBus', url:'https://www.redbus.in/'},
+            {name:'AbhiBus', url:'https://www.abhibus.com/'}
+          ]},
+        { key:'movie', label:'Movies', sub:'District', prompt:'Book movie tickets',
+          providers:[ {name:'District', url:'https://www.district.in/movies/'} ]},
+        { key:'flight', label:'Flight', sub:'Airlines and travel sites', prompt:'Select a flight booking provider',
+          providers:[
+            {name:'MakeMyTrip', url:'https://www.makemytrip.com/flights/'},
+            {name:'Yatra', url:'https://www.yatra.com/'},
+            {name:'IndiGo', url:'https://www.goindigo.in/'}
+          ]}
+      ]
+    },
+    bills: {
+      title: 'Bill pay', prompt: 'Which bill would you like to pay?',
+      categories: [
+        { key:'electricity', label:'Electricity', sub:'Power distribution companies', prompt:'Select your electricity provider',
+          providers:[
+            {name:'APEPDCL (Andhra Pradesh Eastern)', url:'https://www.apeasternpower.com/'},
+            {name:'Tata Power', url:'https://www.tatapower.com/'},
+            {name:'Adani Electricity', url:'https://www.adanielectricity.com/'},
+            {name:'Paytm Bill Payments', url:'https://paytm.com/electricity-bill-payment'}
+          ]},
+        { key:'water', label:'Water', sub:'Municipal water boards', prompt:'Select a bill payment service',
+          providers:[
+            {name:'Paytm Bill Payments', url:'https://paytm.com/water-bill-payment'},
+            {name:'PhonePe', url:'https://www.phonepe.com/'}
+          ]},
+        { key:'gas', label:'Gas', sub:'Piped and cylinder gas', prompt:'Select a bill payment service',
+          providers:[
+            {name:'Paytm Bill Payments', url:'https://paytm.com/gas-bill-payment'},
+            {name:'PhonePe', url:'https://www.phonepe.com/'}
+          ]}
+      ]
+    }
+  };
+
+  /* ================= App state (data itself lives in Supabase) ================= */
+  let currentUser = null;
   let isAdminSession = false;
   let adminUsersCache = [];
   let otherUsersCache = [];
   let activityLog = [];
 
+  /* ================= Preferences: animations + sound ================= */
+  const prefs = { anim: true, sound: true };
+  function loadPrefs(){
+    try{
+      const a = localStorage.getItem('vbanking_pref_anim'), s = localStorage.getItem('vbanking_pref_sound');
+      if(a !== null) prefs.anim = a === '1';
+      if(s !== null) prefs.sound = s === '1';
+    }catch(e){}
+    applyPrefs();
+  }
+  function applyPrefs(){
+    document.body.classList.toggle('anim-off', !prefs.anim);
+    document.getElementById('animToggle').classList.toggle('on', prefs.anim);
+    document.getElementById('soundToggle').classList.toggle('on', prefs.sound);
+  }
+  function toggleAnimPref(){ prefs.anim = !prefs.anim; try{ localStorage.setItem('vbanking_pref_anim', prefs.anim?'1':'0'); }catch(e){} applyPrefs(); }
+  function toggleSoundPref(){
+    prefs.sound = !prefs.sound;
+    try{ localStorage.setItem('vbanking_pref_sound', prefs.sound?'1':'0'); }catch(e){}
+    applyPrefs();
+    if(prefs.sound) playSuccessSound();
+  }
+  function toggleSettings(e){ e.stopPropagation(); document.getElementById('settingsPop').classList.toggle('open'); }
+  document.addEventListener('click', ()=>{ const p=document.getElementById('settingsPop'); if(p) p.classList.remove('open'); });
+
+  /* ---- Success chime, synthesised with the Web Audio API (no audio file needed) ---- */
+  let audioCtx = null;
+  function playSuccessSound(){
+    if(!prefs.sound) return;
+    try{
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC) return;
+      if(!audioCtx) audioCtx = new AC();
+      if(audioCtx.state === 'suspended') audioCtx.resume();
+      const t0 = audioCtx.currentTime + 0.02;
+      // A rising "coin then chime" figure: G5, B5, D6, G6 with a soft shimmer on the last note
+      const notes = [
+        {f:784.0,  t:0.00, d:0.22, v:0.18},
+        {f:987.8,  t:0.09, d:0.24, v:0.18},
+        {f:1174.7, t:0.18, d:0.28, v:0.18},
+        {f:1568.0, t:0.30, d:0.80, v:0.20}
+      ];
+      notes.forEach(n=>{
+        [[1,'triangle',1],[2,'sine',0.35]].forEach(([mult,type,amp])=>{
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type;
+          osc.frequency.value = n.f * mult;
+          const start = t0 + n.t;
+          gain.gain.setValueAtTime(0.0001, start);
+          gain.gain.exponentialRampToValueAtTime(n.v * amp, start + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.0001, start + n.d);
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.start(start); osc.stop(start + n.d + 0.05);
+        });
+      });
+    }catch(e){ /* sound is a nicety; never block a payment on it */ }
+  }
+
   /* ================= Row <-> app object mapping ================= */
   function mapUser(row){
     return {
-      id: row.id,
-      name: row.name,
-      username: row.username,
-      password: row.password,
-      balance: Number(row.balance),
-      vegaNotes: row.vega_notes || {},
-      vegaId: row.vega_id,
-      vegaIdActive: row.vega_id_active,
-      vegaPin: row.vega_pin,
+      id: row.id, name: row.name, username: row.username, password: row.password,
+      balance: Number(row.balance), vegaNotes: row.vega_notes || {},
+      vegaId: row.vega_id, vegaIdActive: row.vega_id_active, vegaPin: row.vega_pin,
       securityQuestions: row.security_questions
     };
   }
@@ -734,18 +1053,17 @@
   function getCurrentUser(){ return currentUser; }
   function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
   function fmt(n){ return '₹' + Number(n).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2}); }
-  function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._timer); t._timer=setTimeout(()=>t.classList.remove('show'), 2200); }
+  function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._timer); t._timer=setTimeout(()=>t.classList.remove('show'), 2400); }
 
-  /* Admin activity log: kept client-side only (not financial data, not worth a table) */
   function loadActivityLog(){ try{ activityLog = JSON.parse(localStorage.getItem('vbanking_admin_log')||'[]'); }catch(e){ activityLog=[]; } }
-  function saveActivityLog(){ localStorage.setItem('vbanking_admin_log', JSON.stringify(activityLog)); }
+  function saveActivityLog(){ try{ localStorage.setItem('vbanking_admin_log', JSON.stringify(activityLog)); }catch(e){} }
   function logAction(desc){ activityLog.unshift({ts:new Date().toLocaleString('en-IN'), desc}); if(activityLog.length>15) activityLog.length=15; saveActivityLog(); }
 
-  /* Session: only the logged-in user's id is kept locally, full data always re-fetched from Supabase */
-  function saveSession(){ if(currentUser){ localStorage.setItem('vbanking_session_uid', String(currentUser.id)); } }
-  function clearSession(){ localStorage.removeItem('vbanking_session_uid'); }
+  function saveSession(){ if(currentUser){ try{ localStorage.setItem('vbanking_session_uid', String(currentUser.id)); }catch(e){} } }
+  function clearSession(){ try{ localStorage.removeItem('vbanking_session_uid'); }catch(e){} }
   async function restoreSession(){
-    const uid = localStorage.getItem('vbanking_session_uid');
+    let uid = null;
+    try{ uid = localStorage.getItem('vbanking_session_uid'); }catch(e){}
     if(!uid) return false;
     const { data, error } = await supabaseClient.from('users').select('*').eq('id', uid).maybeSingle();
     if(error || !data){ clearSession(); return false; }
@@ -758,7 +1076,7 @@
     ['view-auth','view-forgot','view-admin-login','view-admin-panel'].forEach(id=>{
       document.getElementById(id).classList.toggle('active', id==='view-'+name);
     });
-    const dashboardNames = ['home','vega','send-pick','send','normal-send','load','history'];
+    const dashboardNames = ['home','vega','send-pick','send','normal-send','load','history','everyday','manual'];
     const inDashboard = dashboardNames.includes(name);
     document.getElementById('appShell').classList.toggle('shown', inDashboard);
     document.getElementById('bottomTabsShell').style.display = inDashboard ? '' : 'none';
@@ -766,6 +1084,7 @@
       document.querySelectorAll('#appShell .view').forEach(v=>v.classList.remove('active'));
       document.getElementById('view-'+name).classList.add('active');
     }
+    window.scrollTo(0,0);
   }
   function setActiveNav(name){
     document.querySelectorAll('.side-link').forEach(l=>l.classList.remove('active'));
@@ -774,6 +1093,62 @@
   function goHome(){ setActiveNav('home'); renderHomeTxns(); showScreen('home'); }
   function goVega(){ renderNotesGrid(); renderMyIdCard(); showScreen('vega'); }
   function goHistory(){ setActiveNav('history'); renderHistory(); showScreen('history'); }
+  function openManual(){ setActiveNav('manual'); showScreen('manual'); }
+
+  /* ================= Everyday services ================= */
+  let everydayKey = null, everydayCatKey = null;
+  function openEveryday(key){
+    everydayKey = key; everydayCatKey = null;
+    setActiveNav(key==='bills' ? 'bills' : 'home');
+    renderEveryday();
+    showScreen('everyday');
+  }
+  function renderEveryday(){
+    const svc = EVERYDAY[everydayKey];
+    const list = document.getElementById('everydayList');
+    const chevron = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
+    if(!everydayCatKey){
+      document.getElementById('everydayTitle').textContent = svc.title;
+      document.getElementById('everydayPrompt').textContent = svc.prompt;
+      list.innerHTML = svc.categories.map((c,i)=>`
+        <button class="pick-row" style="animation-delay:${i*0.05}s" onclick="pickEverydayCat('${c.key}')">
+          <div><div>${escapeHtml(c.label)}</div><div class="pick-sub">${escapeHtml(c.sub)}</div></div>${chevron}
+        </button>`).join('');
+    } else {
+      const cat = svc.categories.find(c=>c.key===everydayCatKey);
+      document.getElementById('everydayTitle').textContent = cat.label;
+      document.getElementById('everydayPrompt').textContent = cat.prompt;
+      list.innerHTML = cat.providers.map((p,i)=>`
+        <button class="pick-row" style="animation-delay:${i*0.05}s" onclick="openProvider(${i})">
+          <div>${escapeHtml(p.name)}</div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg>
+        </button>`).join('');
+    }
+  }
+  function pickEverydayCat(key){
+    const svc = EVERYDAY[everydayKey];
+    const cat = svc.categories.find(c=>c.key===key);
+    if(cat.providers.length === 1){
+      // Only one provider (e.g. IRCTC): go straight there
+      goToProvider(cat.providers[0]);
+      return;
+    }
+    everydayCatKey = key;
+    renderEveryday();
+  }
+  function openProvider(i){
+    const svc = EVERYDAY[everydayKey];
+    const cat = svc.categories.find(c=>c.key===everydayCatKey);
+    goToProvider(cat.providers[i]);
+  }
+  function goToProvider(p){
+    toast('Opening ' + p.name + '…');
+    window.open(p.url, '_blank', 'noopener,noreferrer');
+  }
+  function everydayBack(){
+    if(everydayCatKey){ everydayCatKey = null; renderEveryday(); }
+    else { goHome(); }
+  }
 
   /* ================= Auth ================= */
   function populateQuestionSelects(){
@@ -1072,13 +1447,13 @@
     switchRecipientTab(defaultTab);
     document.getElementById('userPickList').innerHTML = '<p class="txn-empty">Loading…</p>';
     document.getElementById('qrPickGrid').innerHTML = '';
+    showScreen('send-pick');
     const { data, error } = await supabaseClient.from('users').select('*').neq('id', currentUser.id);
     otherUsersCache = (error || !data) ? [] : data.map(mapUser);
     renderUserPickList();
     renderQrPickGrid();
     document.getElementById('vegaidLookupInput').value = '';
     document.getElementById('vegaidLookupResult').classList.remove('show');
-    showScreen('send-pick');
   }
   function switchRecipientTab(tab){
     document.getElementById('rtabUsername').classList.toggle('active', tab==='username');
@@ -1131,7 +1506,7 @@
     }
   }
 
-  /* ================= Send flow ================= */
+  /* ================= Send flow (VegaPay) ================= */
   let sendMode = 'manual';
   let selected = {};
   let sendTarget = 100;
@@ -1215,7 +1590,7 @@
     toast(`Broke a ₹${denom} note`);
     if(sendMode==='manual'){ renderSendNotes(); } else { runAutoSelect(); }
   }
-  function resetSend(){ selected = {}; hideBreakSuggest(); hidePinPanels(); renderSendNotes(); }
+  function resetSend(){ selected = {}; hideBreakSuggest(); hidePinPanels(); if(sendMode==='auto'){ runAutoSelect(); } else { renderSendNotes(); } }
   function findExactCombo(target, notesMap){
     const denoms = DENOMS.filter(d=> (notesMap[d]||0) > 0);
     let found = null;
@@ -1291,6 +1666,13 @@
     if(p !== currentUser.vegaPin){ showAuthError('pinEnterError','Incorrect Vega PIN'); return; }
     executeSend();
   }
+  function celebrate(id){
+    const el = document.getElementById(id);
+    el.classList.remove('show');
+    void el.offsetWidth;
+    el.classList.add('show');
+    playSuccessSound();
+  }
   async function executeSend(){
     const recipient = otherUsersCache.find(u=>u.id===sendRecipientId);
     if(!recipient){ toast('Recipient not found'); return; }
@@ -1313,10 +1695,45 @@
     hidePinPanels();
     document.getElementById('sendFormArea').style.display = 'none';
     document.getElementById('sendSuccessMsg').textContent = `${fmt(sendTarget)} sent to ${recipient.name}`;
-    document.getElementById('sendSuccess').classList.remove('show');
-    void document.getElementById('sendSuccess').offsetWidth;
-    document.getElementById('sendSuccess').classList.add('show');
-    setTimeout(()=>{ goVega(); }, 1700);
+    celebrate('sendSuccess');
+    setTimeout(()=>{ goVega(); }, 2000);
+  }
+
+  /* ================= Normal bank transfer (no VegaPay) ================= */
+  function openNormalSend(){
+    document.getElementById('normalSendAmount').value = 5;
+    document.getElementById('normalSendSuccess').classList.remove('show');
+    document.getElementById('normalSendFormArea').style.display = 'block';
+    updateNormalSendError();
+    showScreen('normal-send');
+  }
+  function updateNormalSendError(){
+    const amt = Number(document.getElementById('normalSendAmount').value) || 0;
+    const err = document.getElementById('normalSendError');
+    if(amt <= 0){ err.textContent = 'Enter an amount greater than zero'; err.classList.add('show'); }
+    else if(amt > currentUser.balance){ err.textContent = `Exceeds your main account balance of ${fmt(currentUser.balance)}`; err.classList.add('show'); }
+    else { err.classList.remove('show'); }
+  }
+  async function executeNormalSend(){
+    const amt = Number(document.getElementById('normalSendAmount').value) || 0;
+    if(amt <= 0 || amt > currentUser.balance){ updateNormalSendError(); return; }
+    const recipient = otherUsersCache.find(u=>u.id===sendRecipientId);
+    if(!recipient){ toast('Recipient not found'); return; }
+    const newSenderBalance = currentUser.balance - amt;
+    const newRecipientBalance = recipient.balance + amt;
+    const { error: err1 } = await supabaseClient.from('users').update({ balance: newSenderBalance }).eq('id', currentUser.id);
+    const { error: err2 } = await supabaseClient.from('users').update({ balance: newRecipientBalance }).eq('id', recipient.id);
+    if(err1 || err2){ toast('Could not complete transfer — try again'); return; }
+    await supabaseClient.from('transactions').insert([
+      { user_id: currentUser.id, type:'debit', description:`[BANK] Sent to ${recipient.name}`, amount: amt },
+      { user_id: recipient.id, type:'credit', description:`[BANK] Received from ${currentUser.name}`, amount: amt }
+    ]);
+    currentUser.balance = newSenderBalance;
+    document.getElementById('normalSendFormArea').style.display = 'none';
+    document.getElementById('normalSendSuccessMsg').textContent = `${fmt(amt)} sent to ${recipient.name} from your main account`;
+    celebrate('normalSendSuccess');
+    refreshHomeBalance();
+    setTimeout(()=>{ goHome(); }, 2000);
   }
 
   /* ================= Load flow ================= */
@@ -1367,50 +1784,9 @@
     currentUser.vegaNotes = newNotes;
     document.getElementById('loadFormArea').style.display = 'none';
     document.getElementById('loadSuccessMsg').textContent = `${fmt(total)} moved from your main account, kept as separate notes`;
-    document.getElementById('loadSuccess').classList.remove('show');
-    void document.getElementById('loadSuccess').offsetWidth;
-    document.getElementById('loadSuccess').classList.add('show');
+    celebrate('loadSuccess');
     refreshHomeBalance();
-    setTimeout(()=>{ goVega(); }, 1700);
-  }
-
-  /* ================= Normal bank transfer (no VegaPay) ================= */
-  function openNormalSend(){
-    document.getElementById('normalSendAmount').value = 5;
-    document.getElementById('normalSendSuccess').classList.remove('show');
-    document.getElementById('normalSendFormArea').style.display = 'block';
-    updateNormalSendError();
-    showScreen('normal-send');
-  }
-  function updateNormalSendError(){
-    const amt = Number(document.getElementById('normalSendAmount').value) || 0;
-    const err = document.getElementById('normalSendError');
-    if(amt <= 0){ err.textContent = 'Enter an amount greater than zero'; err.classList.add('show'); }
-    else if(amt > currentUser.balance){ err.textContent = `Exceeds your main account balance of ${fmt(currentUser.balance)}`; err.classList.add('show'); }
-    else { err.classList.remove('show'); }
-  }
-  async function executeNormalSend(){
-    const amt = Number(document.getElementById('normalSendAmount').value) || 0;
-    if(amt <= 0 || amt > currentUser.balance){ updateNormalSendError(); return; }
-    const recipient = otherUsersCache.find(u=>u.id===sendRecipientId);
-    if(!recipient){ toast('Recipient not found'); return; }
-    const newSenderBalance = currentUser.balance - amt;
-    const newRecipientBalance = recipient.balance + amt;
-    const { error: err1 } = await supabaseClient.from('users').update({ balance: newSenderBalance }).eq('id', currentUser.id);
-    const { error: err2 } = await supabaseClient.from('users').update({ balance: newRecipientBalance }).eq('id', recipient.id);
-    if(err1 || err2){ toast('Could not complete transfer — try again'); return; }
-    await supabaseClient.from('transactions').insert([
-      { user_id: currentUser.id, type:'debit', description:`[BANK] Sent to ${recipient.name}`, amount: amt },
-      { user_id: recipient.id, type:'credit', description:`[BANK] Received from ${currentUser.name}`, amount: amt }
-    ]);
-    currentUser.balance = newSenderBalance;
-    document.getElementById('normalSendFormArea').style.display = 'none';
-    document.getElementById('normalSendSuccessMsg').textContent = `${fmt(amt)} sent to ${recipient.name} from your main account`;
-    document.getElementById('normalSendSuccess').classList.remove('show');
-    void document.getElementById('normalSendSuccess').offsetWidth;
-    document.getElementById('normalSendSuccess').classList.add('show');
-    refreshHomeBalance();
-    setTimeout(()=>{ goHome(); }, 1700);
+    setTimeout(()=>{ goVega(); }, 2000);
   }
 
   /* ================= History ================= */
@@ -1441,6 +1817,7 @@
   async function init(){
     populateQuestionSelects();
     loadActivityLog();
+    loadPrefs();
     const restored = await restoreSession();
     if(restored){
       document.getElementById('greetName').textContent = currentUser.name.split(' ')[0] || currentUser.name;
